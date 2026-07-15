@@ -1,0 +1,25 @@
+# Stage 2 (both arms): canonicalization of extracted surface triples to Wikidata.
+# The extract -> canonicalize split is deliberate: it lets the harness log where
+# the pipeline loses accuracy (surface extraction vs grounding), which is the
+# decomposition H1 lives on.
+# TODO: candidate QID retrieval happens OUTSIDE the LLM (wbsearchentities API /
+# label index over the XAlign entity inventory); the LLM only disambiguates
+# among retrieved candidates. Template below assumes candidates are provided.
+
+Map the statement to Wikidata.
+
+Statement: {subject} | {relation} | {object}
+
+Candidate subject entities:
+{subject_candidates}
+
+Candidate object entities:
+{object_candidates}
+
+Candidate properties:
+{property_candidates}
+
+Answer with exactly one line:
+subject_qid | property_pid | object_qid_or_literal
+
+If no candidate fits, write NONE in that slot.

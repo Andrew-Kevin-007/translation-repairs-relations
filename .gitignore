@@ -1,0 +1,22 @@
+# Data awaiting/under XAlign author permission — never committed
+data/
+
+# Model outputs and caches
+outputs/
+*.ckpt
+*.gguf
+__pycache__/
+*.pyc
+.venv/
+
+# Paper build artifacts
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.pdf
+
+# OS noise
+Thumbs.db
+.DS_Store

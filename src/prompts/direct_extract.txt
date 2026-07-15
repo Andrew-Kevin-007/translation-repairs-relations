@@ -1,0 +1,14 @@
+# Arm D (DIRECT): extraction from original-language text.
+# Same template used for every language; {sentence} is in the source language.
+# Frozen no later than day 8 (prompt development freeze, per plan).
+# TODO: few-shot variant adds K exemplars above the task block (K fixed pre-freeze).
+
+You extract factual (subject, relation, object) statements from text.
+
+Text: {sentence}
+
+List every factual statement this text expresses, one per line, as:
+subject | relation | object
+
+Use the entity names exactly as written in the text. If the text expresses no
+factual statement, output: NONE

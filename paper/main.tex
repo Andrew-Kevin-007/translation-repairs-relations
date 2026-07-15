@@ -1,0 +1,80 @@
+% [NERD-PROTOCOL] CCIS (llncs.cls) skeleton — hypothesis-first structure per the
+% hypothesis package. ANONYMIZED for double-blind review.
+% Page budget (regular, 12-16pp): S1 1.5pp / S2 2pp / S3 2.5pp / S4 3.5pp / S5 2pp /
+% S6 1pp / refs 1.5pp — tracked here, adjusted at day-13 writing start.
+% NO citations are entered until verified against the source (citation-integrity rule);
+% \citeneed{} marks every spot that needs one.
+\documentclass{llncs}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\newcommand{\citeneed}[1]{\textcolor{red}{[citation needed: #1]}}
+\usepackage{xcolor}
+
+\begin{document}
+
+% TITLE POLICY: deferred until results exist (hypothesis package section 5).
+% Outcome-keyed placeholders:
+%   H1 confirmed: "Lost in Canonicalization: Why Translation Does Not Close the
+%                  Low-Resource Gap in Knowledge Graph Population"
+%   B2:           "Translate, Then Extract: The Low-Resource Knowledge Graph
+%                  Population Gap Is a Machine Translation Problem"
+%   B3:           "Translation Is Not a Shortcut: Measuring Where Knowledge Graph
+%                  Population Fails for Low-Resource Languages"
+\title{[TITLE AFTER RESULTS — see placeholder block above]}
+\author{Anonymous Author(s)}
+\institute{Anonymous Institution}
+
+\maketitle
+
+\begin{abstract}
+% Abstract skeleton (hypothesis package section 3) — sentence slots:
+% 1. Populating knowledge bases such as Wikidata from text in low-resource languages
+%    is limited by an unmeasured question: whether failures come from models not
+%    understanding the text, or from models failing to ground entities into the
+%    canonical knowledge base.
+% 2. We test the hypothesis that translation to English repairs relation
+%    identification but not entity grounding\footnote{Per the gap-recovery criterion
+%    pre-registered in Section~\ref{sec:instrument}.}, using [N] extraction systems
+%    across eight Indic languages in two arms — direct extraction and
+%    translate-then-extract — with component-level scoring.
+% 3. To make this measurable, we adapt the manually annotated portion of an existing
+%    fact-to-text alignment resource into an extraction benchmark, and validate the
+%    adaptation with a native-speaker audit plus automatic cross-checking,
+%    quantifying its miss rate.
+% 4. [RESULT SENTENCE — written after experiments; measured direction + effect size.]
+% 5. We release the benchmark, audit protocol, and evaluation harness, designed so
+%    new languages can be added without bespoke annotation.
+\end{abstract}
+
+\section{Introduction: The Hypothesis and Why It Matters}\label{sec:intro}
+% First paragraph = the hypothesis, verbatim from the pre-registration prose form.
+% No pipeline advertising. Banned vocabulary list: PREREGISTRATION.md section 9.
+
+\section{Related Work}\label{sec:related}
+% Assembled from the verified-source lists in the Maestro reports; every entry
+% re-verified at writing time. \citeneed{XAlign WWW 2022} \citeneed{REDFM ACL 2023}
+% \citeneed{Better To Ask in English} \citeneed{fertility literature}
+
+\section{The Instrument: Benchmark and Its Validation}\label{sec:instrument}
+% Reversed-XAlign benchmark; three-way triple classification; component metrics;
+% the C2 native-speaker audit AS instrument validation (audit protocol = artifact);
+% pre-registration summary + pointer to the frozen file (anonymized repo link).
+
+\section{The Test: Direct vs.\ Translate-then-Extract}\label{sec:test}
+% GRR results per language x system; decision-table verdicts; H1/B2/B3 branch outcome;
+% English-ceiling pairing note + synthetic-parallel robustness probe result.
+
+\section{Secondary Analyses}\label{sec:secondary}
+% C3 (if day-8 gate passed: Hindi anchor + 7-language transfer test), C4/C5-fragment
+% (exploratory, labeled), error taxonomy incl.\ hallucination structure (C6 dimension).
+
+\section{Implications and Limitations}\label{sec:implications}
+% For practitioners (translate first?) and benchmark builders (gold-reuse reliability).
+% Limitations: single-family breadth, gold reuse caveats, audit on one language.
+
+% \section*{AI-Assistance Disclosure} — Springer Nature policy statement, drafted day 13+.
+
+\bibliographystyle{splncs04}
+\bibliography{references} % references.bib starts EMPTY — entries only after verification
+
+\end{document}
