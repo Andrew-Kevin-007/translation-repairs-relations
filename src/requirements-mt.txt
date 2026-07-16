@@ -1,0 +1,17 @@
+# MT venv (D:\xlkg-models\venv-mt, Python 3.11) — EXACT pins, verified working
+# 2026-07-18 (selftest_mt.py: ta/hi/bn -> en all correct).
+#
+# transformers MUST stay <4.47: the ai4bharat/indictrans2* remote code uses the
+# legacy tuple KV-cache (breaks on >=4.5x cache refactor) and imports
+# transformers.onnx (removed in v5). 4.46.3 is the newest verified version.
+# The IndicTrans2 repos are HF-gated: set HF_TOKEN (user env var; never commit).
+
+torch==2.13.0
+transformers==4.46.3
+tokenizers==0.20.3
+sentencepiece==0.2.2
+huggingface_hub==0.36.2
+indic-nlp-library==0.92
+sacremoses==0.1.1
+regex==2026.7.10
+tqdm==4.68.4
