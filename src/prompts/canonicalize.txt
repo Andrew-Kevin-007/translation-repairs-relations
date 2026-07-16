@@ -22,4 +22,5 @@ Candidate properties:
 Answer with exactly one line:
 subject_qid | property_pid | object_qid_or_literal
 
-If no candidate fits, write NONE in that slot.
+If the object is a date, year, or number, write the literal value (e.g. 1861),
+not an entity ID. If no candidate fits, write NONE in that slot.

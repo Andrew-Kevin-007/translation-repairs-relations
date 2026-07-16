@@ -1,0 +1,4 @@
+{"id": "syn-ta-001", "lang": "ta", "sentence": "சென்னை தமிழ்நாட்டின் தலைநகரம் ஆகும்.", "gold": [{"subject_qid": "Q1445", "property_pid": "P36", "object": "Q1352"}]}
+{"id": "syn-ta-002", "lang": "ta", "sentence": "இரவீந்திரநாத் தாகூர் 1861 ஆம் ஆண்டு பிறந்தார்.", "gold": [{"subject_qid": "Q7241", "property_pid": "P569", "object": "1861"}]}
+{"id": "syn-en-001", "lang": "en", "sentence": "Douglas Adams was born in Cambridge.", "gold": [{"subject_qid": "Q42", "property_pid": "P19", "object": "Q350"}]}
+{"id": "syn-en-002", "lang": "en", "sentence": "Chennai is the capital of Tamil Nadu.", "gold": [{"subject_qid": "Q1445", "property_pid": "P36", "object": "Q1352"}]}
