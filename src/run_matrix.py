@@ -111,14 +111,30 @@ def run(dataset_path: str, model_keys: list[str], arms: list[str],
                     sentence, surf_lang = arm_input(item, arm, mt)
                     messages = [{"role": "user", "content":
                                  extract_template().format(sentence=sentence)}]
+                    # extraction gets the same tolerance as canonicalization:
+                    # a deterministic server-side failure (e.g. a chat-format
+                    # parse 500 under seeded decoding) would otherwise
+                    # crashloop the resumable run on a single item
                     t_x0 = time.perf_counter()
-                    resp = server.chat(messages, max_tokens=256)
+                    resp, x_err = None, None
+                    for _ in range(3):
+                        try:
+                            resp = server.chat(messages, max_tokens=256)
+                            break
+                        except Exception as e:
+                            x_err = str(e)[:300]
+                            time.sleep(5)
                     extract_s = time.perf_counter() - t_x0
-                    raw_x.append(spec, messages, resp,
+                    raw_x.append(spec, messages,
+                                 resp if resp is not None else {"error": x_err},
                                  meta={"item_id": item.id, "arm": arm,
                                        "lang": item.lang, "surface_lang": surf_lang,
                                        "run_id": run_id})
-                    parsed = parse_extraction(response_text(resp))
+                    if resp is None:
+                        print("EXTRACT-FAIL %s %s %s: %s"
+                              % (item.id, spec.name, arm, x_err[:160]), flush=True)
+                    parsed = parse_extraction(
+                        response_text(resp) if resp is not None else "")
                     t_c0 = time.perf_counter()
                     canon = []
                     for st in parsed.triples:
@@ -154,8 +170,10 @@ def run(dataset_path: str, model_keys: list[str], arms: list[str],
                         # wall seconds per stage + engine-reported token usage
                         "cost": {"extract_s": round(extract_s, 3),
                                  "canon_s": round(time.perf_counter() - t_c0, 3),
-                                 "usage": resp.get("usage")},
+                                 "usage": (resp or {}).get("usage")},
                     }
+                    if resp is None:
+                        record["error"] = x_err
                     with open(results_path, "a", encoding="utf-8") as f:
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     print("done %s %s %s (%d triples)" %
