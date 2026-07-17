@@ -56,6 +56,10 @@ class WikidataClient:
         path = Path(cache_path) if cache_path else _DEFAULT_CACHE
         path.parent.mkdir(parents=True, exist_ok=True)
         self._db = sqlite3.connect(str(path))
+        # WAL + generous busy timeout: several worker processes may share the
+        # cache (writes are tiny INSERT OR REPLACE rows, so contention is brief)
+        self._db.execute("PRAGMA journal_mode=WAL")
+        self._db.execute("PRAGMA busy_timeout=15000")
         self._db.execute(
             "CREATE TABLE IF NOT EXISTS kv ("
             " ns TEXT NOT NULL, key TEXT NOT NULL, val TEXT NOT NULL,"

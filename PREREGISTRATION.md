@@ -91,4 +91,58 @@ Licensed only by row 6: stratify all arms by entity popularity (Wikidata sitelin
 
 ## 10. Amendment log
 
-(empty — any post-data change to rules or thresholds must be appended here with date, reason, and impact statement; the sections above are never edited)
+(any post-data change to rules or thresholds must be appended here with date, reason, and impact statement; the sections above are never edited)
+
+### Amendment 1 — 2026-07-17 (PRE-SCORING): decision-table statistical repairs
+
+**Timing statement**: recorded before any model output was scored. The
+extraction matrix (run_matrix.py, run-id main-v1) began generating on
+2026-07-17; score.py — the only component that computes metrics, and which is
+git-gated on this file's history — has never been executed. No F1, GRR, or any
+experimental quantity has been observed by anyone.
+
+**Reason**: an internal adversarial review (2026-07-17) found the frozen
+consistency criterion arithmetically unsatisfiable as written, plus three
+under-specified rules. These are repairs of internal inconsistency, not
+retuning: no threshold moves in a direction that makes any claim easier
+relative to a satisfiable reading of the frozen text.
+
+**A1 — Sign-test sidedness.** §5 requires "exact two-sided binomial sign test
+... ≥7/8 in the same direction (p < 0.05)". For n=8, k=7 the exact two-sided
+p = 0.0703 > 0.05; only 8/8 (p = 0.0078) satisfies the two-sided reading, so
+the frozen "≥7/8" threshold and the two-sided test contradict each other.
+Resolution: the test is declared **one-sided** in the direction pre-specified
+by H1 (each row's rule already names its direction of repair/improvement).
+Under the one-sided test, 7/8 gives exact p = 0.0352 < 0.05 — the frozen
+"≥7/8" operating point becomes coherent. Justification: H1 is directional;
+a two-sided consistency test was an error of transcription, as evidenced by
+the impossible threshold pair. Impact: makes the criterion satisfiable as the
+frozen threshold intended; does not lower the bar below any satisfiable
+reading of the frozen text (the only stricter coherent alternative, 8/8
+two-sided, is equivalent to 8/8 one-sided at p = 0.0039, and remains
+reportable from published per-language directions).
+
+**A2 — Consistency rule under exclusion-reduced n.** §3's 8-point-gap
+exclusion can reduce the usable-language count below 8; the frozen "≥7/8" is
+then undefined. General rule: with n usable languages, consistency requires
+**all-but-at-most-one in the H1 direction AND exact one-sided binomial
+p < 0.05 given n**. Numerically: n ≥ 8 → (n−1) suffices; n ∈ {5,6,7} →
+all n must agree (at n=7, 6/7 gives p = 0.0625; 7/7 gives p = 0.0078);
+n < 5 already triggers §3's escape hatch (underpowered, CIs without verdict).
+
+**A3 — Holm-Bonferroni family size.** §5 hardcodes "6 primary-family tests
+(2 metrics x 3 systems)" while §2 specifies "2-3 open multilingual LLMs". The
+family is defined as **2 metrics × N systems actually run**. The matrix
+launched 2026-07-17 runs N=2 (Qwen3-8B, Llama-3.1-8B, both Q4_K_M) → family
+size 4. Fixed here, before any p-value exists.
+
+**A4 — "Majority across systems" at N=2.** Undefined as frozen. Definition:
+at N=2, "majority" means **unanimity**; if the two systems disagree on a
+row's three-way verdict, that row is scored at the weaker of the two outcomes
+(REPAIRED+PARTIAL → PARTIAL; any+NOT-REPAIRED → NOT REPAIRED), and row 4
+routes accordingly (typically to MIXED). This is the conservative resolution:
+disagreement can only weaken, never strengthen, a claim.
+
+Amendments drafted with AI assistance (disclosed per the paper's
+AI-assistance statement); arithmetic verified independently by direct
+computation before recording.

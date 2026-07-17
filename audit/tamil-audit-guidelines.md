@@ -1,4 +1,18 @@
-# Gold Audit Guidelines — Tamil slice (v1)
+# Gold Audit Guidelines — Tamil slice (v1.1)
+
+> **v1.1 additions (2026-07-17, from the adversarial pre-review — do these
+> on audit day alongside the per-item procedure):**
+> 1. **Subject-QID spot-checks**: for a systematic sample (every 10th kept
+>    item) PLUS every kept item whose subject was resolved with corroboration
+>    score = 1 and a single gold fact (the resolver's weakest case), open the
+>    resolved QID on Wikidata and judge: is this the person the Tamil sentence
+>    is about? Record `SUBJ-OK` / `SUBJ-WRONG` / `SUBJ-UNSURE` per checked item.
+> 2. **Second-adjudication of semantic predicate mappings**: review the
+>    mappings `founded by`→P112, `league`→P118, `officeholder`→P1308,
+>    `work period (end)`→P2032 (see admin/gold-adaptation-log.md) against
+>    3-5 gold items each; record agree/disagree with one-line rationale.
+> The audit's primary quantity for claim C2 is the **miss rate** (steps 2 and
+> 4 below), not only the per-triple validity judgments.
 
 **Role in the study**: this is the measurement instrument for claim C2
 (PREREGISTRATION.md row 7) and a released artifact ("how to add and verify a language").

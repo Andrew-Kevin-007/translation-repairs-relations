@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -110,12 +111,15 @@ def run(dataset_path: str, model_keys: list[str], arms: list[str],
                     sentence, surf_lang = arm_input(item, arm, mt)
                     messages = [{"role": "user", "content":
                                  extract_template().format(sentence=sentence)}]
+                    t_x0 = time.perf_counter()
                     resp = server.chat(messages, max_tokens=256)
+                    extract_s = time.perf_counter() - t_x0
                     raw_x.append(spec, messages, resp,
                                  meta={"item_id": item.id, "arm": arm,
                                        "lang": item.lang, "surface_lang": surf_lang,
                                        "run_id": run_id})
                     parsed = parse_extraction(response_text(resp))
+                    t_c0 = time.perf_counter()
                     canon = []
                     for st in parsed.triples:
                         cp = canonicalize_triple(
@@ -136,6 +140,11 @@ def run(dataset_path: str, model_keys: list[str], arms: list[str],
                         "flags": {"had_think": parsed.had_think,
                                   "is_none": parsed.is_none,
                                   "unparsed_lines": parsed.unparsed_lines},
+                        # exploratory cost accounting (never enters verdicts):
+                        # wall seconds per stage + engine-reported token usage
+                        "cost": {"extract_s": round(extract_s, 3),
+                                 "canon_s": round(time.perf_counter() - t_c0, 3),
+                                 "usage": resp.get("usage")},
                     }
                     with open(results_path, "a", encoding="utf-8") as f:
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -151,9 +160,14 @@ def main() -> int:
     ap.add_argument("--arms", default="direct,pivot,english")
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--mt-model", default=None)
+    ap.add_argument("--property-inventory", default=None,
+                    help="JSON file: [{id,label,description}] closed relation set")
     args = ap.parse_args()
+    inventory = None
+    if args.property_inventory:
+        inventory = json.loads(Path(args.property_inventory).read_text(encoding="utf-8"))
     path = run(args.dataset, args.models.split(","), args.arms.split(","),
-               args.run_id, args.mt_model)
+               args.run_id, args.mt_model, property_inventory=inventory)
     print("results ->", path)
     return 0
 
