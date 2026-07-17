@@ -110,7 +110,11 @@ class LlamaServer:
             payload["chat_template_kwargs"] = self.spec.template_kwargs
         resp = requests.post(self._url("/v1/chat/completions"), json=payload,
                              timeout=600)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            # surface the server's own error body — a bare status code cost us
+            # a run-halting mystery on 2026-07-17
+            raise RuntimeError("llama-server HTTP %d: %s"
+                               % (resp.status_code, resp.text[:500]))
         return resp.json()
 
 

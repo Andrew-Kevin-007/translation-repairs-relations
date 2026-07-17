@@ -122,10 +122,20 @@ def run(dataset_path: str, model_keys: list[str], arms: list[str],
                     t_c0 = time.perf_counter()
                     canon = []
                     for st in parsed.triples:
-                        cp = canonicalize_triple(
-                            server, raw_c, st, surf_lang, wd,
-                            property_inventory=property_inventory,
-                            meta={"item_id": item.id, "arm": arm, "run_id": run_id})
+                        # a single pathological triple must not kill a multi-day
+                        # run: failures are archived and scored as unresolved
+                        try:
+                            cp = canonicalize_triple(
+                                server, raw_c, st, surf_lang, wd,
+                                property_inventory=property_inventory,
+                                meta={"item_id": item.id, "arm": arm, "run_id": run_id})
+                        except Exception as e:
+                            canon.append({"surface": list(st), "subject_qid": None,
+                                          "property_pid": None, "object": None,
+                                          "parsed": False, "error": str(e)[:300]})
+                            print("CANON-FAIL %s %s %s: %s"
+                                  % (item.id, spec.name, arm, str(e)[:160]), flush=True)
+                            continue
                         canon.append({
                             "surface": list(st),
                             "subject_qid": cp.subject, "property_pid": cp.property,

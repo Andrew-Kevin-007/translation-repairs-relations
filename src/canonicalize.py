@@ -38,14 +38,21 @@ def build_canon_messages(surface_triple: tuple[str, str, str], lang: str,
     o_cands = entity_candidates(o, lang, wd_client, limit=limit)
     if property_inventory is not None:
         p_cands = property_inventory  # closed set, already [{id,label,description}]
+        # compact rendering (id | label, no descriptions): the 120-entry closed
+        # inventory with descriptions overflowed the 4096-token context on
+        # high-fertility scripts (observed 2026-07-17, hi-test-0002: 4097 tokens)
+        # — an arm-asymmetric failure mode. Labels are the selection signal;
+        # identical rendering in every arm. Decided pre-freeze, pre-scoring.
+        p_block = "\n".join("%s | %s" % (c["id"], c["label"]) for c in p_cands)
     else:
         # selftest/exploration path only (no dataset inventory yet)
         p_cands = property_candidates(r, wd_client, limit=limit)
+        p_block = format_candidates(p_cands)
     prompt = load_template().format(
         subject=s, relation=r, obj=o, object=o,
         subject_candidates=format_candidates(s_cands),
         object_candidates=format_candidates(o_cands),
-        property_candidates=format_candidates(p_cands))
+        property_candidates=p_block)
     meta = {"surface": [s, r, o], "lang": lang,
             "subject_candidates": [c["id"] for c in s_cands],
             "object_candidates": [c["id"] for c in o_cands],
