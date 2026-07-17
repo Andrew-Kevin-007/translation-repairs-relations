@@ -12,6 +12,7 @@ All CIs: percentile, 95%, N_RESAMPLES = 10_000 (pre-registered).
 from __future__ import annotations
 
 import random
+from math import comb
 from typing import Callable, Sequence
 
 N_RESAMPLES = 10_000
@@ -73,16 +74,24 @@ def hierarchical_bootstrap(
 
 
 def sign_test_consistency(directions: Sequence[int]) -> bool:
-    """Pre-registered cross-language consistency: >=7 of 8 languages in the same
-    direction (exact two-sided binomial at n=8: P(>=7) = 9/256 * 2 ~= 0.070 one-sided
-    0.035, two-sided 0.070 -- the pre-registration fixes the >=7/8 count rule itself)."""
+    """Cross-language consistency per PREREGISTRATION.md Amendment 1 (A1+A2,
+    recorded pre-scoring 2026-07-17): exact ONE-SIDED binomial in the
+    hypothesis' pre-specified direction (positive = pivot improves on direct).
+    With n usable languages: all-but-at-most-one positive AND one-sided
+    p < 0.05 -- numerically (n-1)+ of n for n >= 8, all n for 5 <= n < 8.
+    Below 5 usable languages the escape hatch applies (CIs, no verdict):
+    False here."""
+    n = len(directions)
     pos = sum(1 for d in directions if d > 0)
-    neg = sum(1 for d in directions if d < 0)
-    return max(pos, neg) >= 7 and len(directions) == 8
+    if n < 5:
+        return False
+    p = sum(comb(n, i) for i in range(pos, n + 1)) / 2.0 ** n
+    return (n - pos) <= 1 and p < 0.05
 
 
 def holm_bonferroni(pvals: dict[str, float], alpha: float = 0.05) -> dict[str, bool]:
-    """Holm-Bonferroni over the 6 primary-family tests (2 metrics x 3 systems)."""
+    """Holm-Bonferroni over the primary family: 2 metrics x N systems actually
+    run (Amendment 1 A3 -- N=2 as launched, so 4 tests). Size-agnostic."""
     ordered = sorted(pvals.items(), key=lambda kv: kv[1])
     m = len(ordered)
     rejected = {}
