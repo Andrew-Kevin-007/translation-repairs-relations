@@ -193,11 +193,16 @@ by construction a set of facts genuinely asserted by the text --- the property
 extraction gold requires --- while inheriting XAlign's human verification.
 
 \emph{Re-grounding.} XAlign stores facts as English label strings; scoring
-against Wikidata requires canonical identifiers. We re-ground deterministically
---- no LLM participates in instrument construction: (i)~predicate labels map to
+against Wikidata requires canonical identifiers. We re-ground without LLM
+participation, deterministically in the reproducible sense: given the archived
+Wikidata response cache and the released predicate mapping table, the
+procedure yields the same benchmark exactly. (i)~Predicate labels map to
 property PIDs on an exact (case-folded) label match against Wikidata's
-property registry, or, when the search returns exactly one non-exact
-candidate, on that lone candidate, flagged for post-hoc review; (ii)~each
+property registry; when the search returns exactly one non-exact candidate,
+that lone candidate is taken, flagged for post-hoc review; and for the small
+closed set of predicate labels whose English labels have drifted on Wikidata
+since XAlign's snapshot, a manually verified override table (five entries,
+released with per-predicate match types) supplies the mapping; (ii)~each
 subject label is resolved by retrieving candidate
 QIDs by name and scoring every candidate by how many of the item's own gold
 facts its live Wikidata claims corroborate --- the item's facts thereby
@@ -210,7 +215,10 @@ the property, then retained as literals rather than QIDs. An item enters the
 benchmark only if \emph{every} fact resolves --- an unresolved subject, an
 unresolved predicate, or an unmatched object or literal each drop the whole
 item (strict retention) --- so the benchmark never carries silently missing
-gold into recall denominators.
+gold into recall denominators. Membership in Wikidata is thereby part of the
+task definition: the benchmark measures grounding of entities the knowledge
+base contains, and NIL detection --- recognizing entities Wikidata lacks ---
+is out of scope by construction.
 
 Table~\ref{tab:gold} reports per-language
 retention \afterruns{fill from gold stats}; full per-language drop-reason
@@ -218,7 +226,12 @@ counts are released with the harness. We expect this loss to be dominated by
 drift between the 2020--2021 dumps XAlign was built from and today's Wikidata
 rather than by resolution failures intrinsic to the procedure itself
 \afterruns{confirm against the drop-reason counts}; strict retention trades
-size for auditability against that expected cost.
+size for auditability against that expected cost. Retention necessarily
+varies by language; because the primary contrast is item-paired within each
+language (Section~\ref{sec:test}), differential retention shifts the
+composition of \emph{cross-language} comparisons --- a caveat those analyses
+carry explicitly --- but cannot confound the within-language
+\textsc{direct}-versus-\textsc{pivot} contrast.
 
 \begin{table}[t]
 \centering
@@ -303,6 +316,29 @@ Systems: \afterruns{2--3 open multilingual LLMs, 7--9B class, 4-bit
 quantized, zero- and few-shot; named with exact checkpoints and inference
 settings}.
 
+Two properties of the canonicalization interface hold identically across arms
+and matter for interpretation. First, extraction is open-vocabulary, but
+relation canonicalization is closed-set: the canonicalization prompt carries
+the inventory of properties attested in the adapted gold, so systems
+\emph{select} rather than generate property identifiers; absolute relation-F1
+is therefore not open-inventory performance
+(Section~\ref{sec:implications}). Second, entity canonicalization is
+retrieval-mediated: a mention is grounded by choosing among at most eight
+candidates returned by Wikidata's search API --- queried in the source
+language with an English top-up in \textsc{direct}, and in English in
+\textsc{pivot} and \textsc{english} --- with the instruction prompts
+themselves held constant in English across all arms and languages; only the
+passage varies. Retrieval is thus a component of measured entity grounding,
+not a controlled-away nuisance: a native-script mention can fail at retrieval
+before the model ever chooses. The direction of this asymmetry is
+conservative for the hypothesis --- the \textsc{pivot} arm enjoys the
+stronger English retrieval path, so a finding of entity \emph{non-repair}
+cannot be an artifact of retrieval disadvantage --- while a
+both-components-repair outcome would inherit it as a caveat. We therefore
+decompose entity errors into retrieval misses versus selection errors from
+the archived candidate sets. \afterruns{candidate-retrieval recall per (arm,
+language) and the miss/selection decomposition.}
+
 \subsection{Gap Recovery Ratio}
 For metric $m \in \{\text{relation-F1}, \text{entity-F1}\}$ and each
 (language, system) cell,
@@ -342,7 +378,9 @@ disagreement on a verdict row resolves to the weaker outcome. Both falsification
 pre-registered claims: repair of \emph{both} components would evidence an
 English-bound knowledge interface in current open LLMs; relation-F1 itself
 failing to repair redirects the explanation toward entity-coverage structure,
-tested by popularity-quartile stratification. Any other outcome is reported as
+tested by popularity-quartile stratification over the retained items'
+popularity distribution (dropped items are unscorable, so the quartile claim
+is scoped to what the benchmark retains). Any other outcome is reported as
 mixed: the continuous GRR profile is published without forcing a headline
 verdict, led instead by the gold-reliability finding
 (Section~\ref{sec:instrument}).
@@ -358,7 +396,9 @@ check; synthetic-parallel probe result.}
 \afterruns{C3: mREBEL (in-coverage anchor: Hindi) vs.\ zero-shot LLMs across
 the seven out-of-coverage languages --- inversion test per pre-registered rule.
 C4 (exploratory, labeled): tokenizer fertility vs.\ resource-share proxies as
-degradation predictors. C5-fragment (exploratory, labeled): stability of the
+degradation predictors --- state the retention-differential caveat
+(per-language keep rates differ, so cross-language points differ in
+composition) and report the keep-rate-vs-GRR scatter. C5-fragment (exploratory, labeled): stability of the
 per-language degradation ordering across model scale. C6: taxonomy of
 hallucination-candidate structure --- dimension of the error analysis, never a
 claim.}
@@ -379,7 +419,11 @@ its 2020--2021 snapshot, mitigated but not eliminated by strict retention and
 live-Wikidata cross-checking. The native-speaker audit covers one of the eight
 languages; the other seven rely on the automated incompleteness estimate. The
 \textsc{pivot} arm uses one MT engine; the QE correlation bounds, but does not
-remove, MT-engine specificity. \afterruns{any limitation surfaced by the runs
+remove, MT-engine specificity. Relation canonicalization is scored as
+selection over the gold's closed property inventory, identical across arms
+and languages; open-inventory canonicalization is a harder task, so absolute
+relation-F1 does not transfer to open-world settings, though the closed set
+leaves the arm and language \emph{contrasts} untouched. \afterruns{any limitation surfaced by the runs
 themselves.}
 
 % \section*{AI-Assistance Disclosure} — Springer Nature policy statement, drafted day 13+.
