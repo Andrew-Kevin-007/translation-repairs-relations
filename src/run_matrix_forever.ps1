@@ -1,7 +1,9 @@
 # Detached, self-healing runner for the xlkg experiment matrix.
 # Started via Start-Process so it survives the Claude session entirely.
 # Log: D:\xlkg-data\matrix-run.log   Stop it: stop-matrix.flag in D:\xlkg-data
-$env:XLKG_CONTACT = "kevinandrew.27it@licet.ac.in"
+# Contact email for the Wikidata User-Agent lives OUTSIDE the repo
+# (double-blind: no identifying strings in tracked files).
+$env:XLKG_CONTACT = (Get-Content "D:\xlkg-data\contact.txt" -ErrorAction SilentlyContinue | Select-Object -First 1)
 # Progress lines contain Indic text; redirected stdout defaults to cp1252 and
 # crashes the run (UnicodeEncodeError, seen 2026-07-17). Force UTF-8.
 $env:PYTHONUTF8 = "1"
