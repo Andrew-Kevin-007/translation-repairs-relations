@@ -27,6 +27,9 @@ _MARKER_RE = re.compile(r"^\s*(?:[-*•]|\d{1,3}[.)])\s+")
 _BOLD_RE = re.compile(r"^\*\*(.*)\*\*$")
 _SEPARATOR_RE = re.compile(r"^[\s\-=_|]+$")
 _HEADER_ECHO = ("subject", "relation", "object")
+# stage-2 template header (src/prompts/canonicalize.txt); Amendment 2 (A5):
+# the same frozen format-echo leniency, completed for the canon stage
+_CANON_HEADER_ECHO = ("subject_qid", "property_pid", "object_qid_or_literal")
 
 
 def strip_think(text: str) -> tuple[str, bool]:
@@ -100,6 +103,8 @@ def parse_canonicalization(text: str) -> CanonParse:
         parts = [p.strip() for p in line.split("|")]
         if len(parts) != 3:
             continue
+        if tuple(p.casefold() for p in parts) == _CANON_HEADER_ECHO:
+            continue  # echoed stage-2 template header, not an answer (A5)
         out.raw_line = raw_line
         out.parsed = True
         s, p, o = parts
