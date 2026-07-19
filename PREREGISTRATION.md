@@ -146,3 +146,35 @@ disagreement can only weaken, never strengthen, a claim.
 Amendments drafted with AI assistance (disclosed per the paper's
 AI-assistance statement); arithmetic verified independently by direct
 computation before recording.
+
+## Amendment 2 (2026-07-20, at first scoring, before any re-parse or re-score)
+
+**A5 — Stage-2 format-echo leniency (mechanical parser completion).** The
+frozen parser (`src/parse_outputs.py`) declares, in its frozen rule list:
+"format ECHOES ignored (not triples, not unparsed): a line that merely
+repeats the template header" — motivated by the 2026-07-17 dry-run finding
+that Llama-3.1 echoes format headers before answering. The implementation,
+however, only encoded the stage-1 header tuple ("subject | relation |
+object"); the stage-2 template line ("subject_qid | property_pid |
+object_qid_or_literal", `src/prompts/canonicalize.txt`) was not encoded.
+Because `parse_canonicalization` takes the first 3-field line, every stage-2
+response that echoes the header parses to the placeholder row instead of the
+model's answer on the following line.
+
+Discovered at first scoring (2026-07-20): Llama-3.1-8B echoed the stage-2
+header in 23,280 / 24,041 canonicalization responses (96.8%); in 22,698 of
+those, well-formed IDs follow immediately after the echoed header; 582 are
+header-only (genuinely unparseable and remain so). Qwen3-8B echoed it in 0
+responses, so the rule provably cannot alter Qwen results.
+
+Resolution: the stage-2 header tuple is added to the format-echo skip — an
+implementation completion of the already-frozen leniency, not a new rule.
+It is content-neutral (defined entirely by our own template string), decided
+from artifact inspection of the raw archives (not from which results it
+produces), and applied uniformly to both systems. Execution discipline:
+re-parse strictly from the frozen raw archives (`outputs/raw/*.canon.jsonl`;
+no model is re-run; extraction stage untouched) into a NEW results file
+(`outputs/parsed/main-v1r.jsonl`); the original parse
+(`outputs/parsed/main-v1.jsonl`) and its scored report are preserved
+unmodified, and the paper will disclose pre-fix Llama numbers alongside
+post-fix. This amendment is committed before the re-parse is executed.
