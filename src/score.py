@@ -112,9 +112,16 @@ def score(results_path, dataset_path, n_resamples: int | None = None):
                     "ci95": percentile_ci(clean) if clean else None,
                     "resamples_used": len(clean),
                 }
+            # Amendment A2 (frozen 2026-07-17, pre-scoring): the consistency
+            # test is defined for any usable n >= 5 (all-but-at-most-one in
+            # the H1 direction AND exact one-sided binomial p < 0.05); n < 5
+            # triggers the escape hatch (underpowered: CIs without verdict).
+            n_used = len(directions)
             report["grr"]["%s/%s/_signtest" % (model, view)] = (
-                sign_test_consistency(directions) if len(directions) == 8
-                else "n/a (%d languages)" % len(directions))
+                {"n": n_used, "positive": directions.count(1),
+                 "consistent": sign_test_consistency(directions)}
+                if n_used >= 5
+                else "escape-hatch (n=%d < 5: CIs without verdict)" % n_used)
     return report
 
 
