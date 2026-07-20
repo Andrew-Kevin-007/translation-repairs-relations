@@ -26,7 +26,10 @@
 %                  Population Gap Is a Machine Translation Problem"
 %   B3:           "Translation Is Not a Shortcut: Measuring Where Knowledge Graph
 %                  Population Fails for Low-Resource Languages"
-\title{[TITLE AFTER RESULTS --- see placeholder block above]}
+% Outcome: MIXED branch (none of the three keyed placeholders applies verbatim);
+% title states the measured dissociation without claiming the unconfirmed verdict.
+\title{Where Translation Helps and Where It Hurts: A Pre-Registered
+Component-Level Study of Knowledge Graph Population from Indic-Language Text}
 \author{Anonymous Author(s)}
 \institute{Anonymous Institution}
 
@@ -39,7 +42,7 @@ understanding the source text, or from models failing to ground what they
 understood into canonical knowledge-base identifiers. We test the hypothesis
 that translating the input to English repairs relation identification but not
 entity grounding\footnote{Per the gap-recovery criterion pre-registered in
-Section~\ref{sec:instrument}.}, using \afterruns{N} extraction systems across
+Section~\ref{sec:instrument}.}, using two open 8B-class extraction systems across
 eight Indic languages in two arms --- direct extraction from the source
 language, and translate-then-extract through English --- with component-level
 scoring that separates the relation and entity contributions to every error.
@@ -48,8 +51,19 @@ fact-to-text alignment resource~\cite{abhishek2022xalign} into a text-to-triple
 extraction benchmark by deterministically re-grounding its English fact labels
 in Wikidata, and we validate the adaptation with a native-speaker audit and
 automatic cross-checking against the live knowledge base, quantifying the
-adapted gold's miss rate. \afterruns{RESULT SENTENCE: measured direction +
-effect size, per the pre-registered decision table.} We release the benchmark,
+adapted gold's miss rate. Under the frozen decision table the verdict lands in
+the pre-registered mixed branch: translation improves relation-F1 in every
+language (unclipped gap recovery $+0.67$ to $+1.86$ over the five languages
+with a measurable baseline gap; exact one-sided sign test $p=.031$,
+not surviving the conservative family correction), while entity grounding
+presents no measurable gap to repair --- it is near-floor even in the English
+control, and translation \emph{reduces} it in seven of eight languages, a
+failure our archived-candidate decomposition localizes to retrieval rather
+than selection: models choose the gold entity in 95--98\% of calls whenever
+retrieval surfaces it. The validation bound licenses the pre-registered
+reliability claim for gold reuse: across all cells, at most 4.8\% (pooled
+1.3\%) of predictions absent from the adapted gold are true in the live
+knowledge base. We release the benchmark,
 audit protocol, and evaluation harness, constructed so that further languages
 can be added without bespoke annotation.
 \end{abstract}
@@ -547,7 +561,15 @@ relation-F1 does not transfer to open-world settings, though the closed set
 leaves the arm and language \emph{contrasts} untouched. \afterruns{any limitation surfaced by the runs
 themselves.}
 
-% \section*{AI-Assistance Disclosure} — Springer Nature policy statement, drafted day 13+.
+\section*{AI-Assistance Disclosure}
+Large-language-model assistance (Anthropic Claude) was used, under author
+direction and review, for engineering the evaluation harness, for statistical
+computation against the pre-registered rules, and for drafting prose that the
+author verified against the underlying artifacts. All hypotheses, thresholds,
+and decision rules were fixed in the version-controlled pre-registration
+before scoring; no generative model contributed gold annotations, and every
+citation was verified against its source. The models under study were run
+locally and are distinct from the assistance tooling.
 
 \bibliographystyle{splncs04}
 \bibliography{references}
