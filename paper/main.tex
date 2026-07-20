@@ -41,11 +41,12 @@ recovery $+0.67$ to $+1.85$ over the five languages with a measurable
 baseline gap; exact one-sided sign test $p=.031$, not surviving the
 conservative family correction), while entity grounding presents no
 verdict-eligible gap to repair under the frozen rule: the English control
-is itself near-floor. For the stronger system, translation reduces entity-F1
-in seven of eight languages; our archived-candidate decomposition attributes
-this to retrieval rather than selection for that system, where models choose
-the gold entity in 93--99\% of calls whenever retrieval surfaces it (76--95\%
-for the second system, whose retrieval pattern does not replicate the
+is itself near-floor. For the system driving the paper's usable relation-repair
+contrasts, translation reduces entity-F1 in seven of eight languages; our
+archived-candidate decomposition attributes this to retrieval rather than
+selection for that system, where models choose the gold entity in
+92.9--99.5\% of calls whenever retrieval surfaces it (76.2--94.7\%
+for the other system, whose retrieval pattern does not replicate the
 direction). The automated validation bound is consistent with the
 pre-registered reliability claim for gold reuse, pending confirmation by the
 native-speaker audit that the frozen rule keys the claim to: across all
@@ -123,7 +124,7 @@ uncertainty and a frozen decision table (Sections~\ref{sec:test}
 and~\ref{sec:secondary}). The measured outcome is the mixed branch:
 translation repairs relation identification, while entity grounding
 presents no verdict-eligible gap to repair and is, descriptively, reduced
-by translation for the stronger system, in the evaluated setting.
+by translation for one of the two systems studied, in the evaluated setting.
 (4)~The complete harness, audit protocol, prompts, and Wikidata response cache
 for reproduction, released anonymously during review.
 
@@ -303,10 +304,10 @@ A drop-classification audit of the retention step points the same way: in a
 pre-registered 50-item sample of dropped source items (classified before any
 scoring), all 50 are consistent with knowledge-base drift, and exactly one
 item in the full 660-drop pool exhibits the procedural signature the
-classification was designed to catch (an unparsed unit quantity). The
-native-speaker audit is completed prior to submission: the audited Tamil miss
-rate is $[\cdot]$\%, reported here alongside the automated bound above and
-evaluated against the same pre-registered 5\% threshold.
+classification was designed to catch (an unparsed unit quantity). A
+native-speaker audit of the same language is scheduled prior to submission;
+its miss rate, evaluated against the same pre-registered 5\% threshold, is
+reported here alongside the automated bound above once complete.
 
 \subsection{Pre-registration}
 All decision thresholds, statistical procedures, exclusion rules, and the
@@ -379,7 +380,7 @@ $.418$), so the retrieval mechanism identified here is evidenced for one
 system and does not generalize across both by construction. Selection, by
 contrast, is high wherever retrieval succeeds in both systems, though not
 uniformly near-ceiling: given the gold entity among the candidates, Qwen3-8B
-selects it in 93--99\% of calls per cell, and Llama-3.1-8B in 76--95\%.
+selects it in 92.9--99.5\% of calls per cell, and Llama-3.1-8B in 76.2--94.7\%.
 Entity grounding in this setting is therefore retrieval-bound rather than
 selection-bound for the system whose behavior licenses the paper's
 mechanistic claim, and the \textsc{english} control is itself
@@ -492,7 +493,8 @@ reported in Table~\ref{tab:grr} (source: \texttt{outputs/score-main-v1r.json}),
 with 95\% bootstrap confidence intervals and per-point verdict labels
 (repaired, partial, beyond taxonomy). Reference lines mark the
 \textsc{repaired} threshold ($\mathrm{GRR}=0.75$) and the English ceiling
-($\mathrm{GRR}=1.0$).}
+($\mathrm{GRR}=1.0$); the shaded band marks the pre-registered
+\textsc{not-repaired} zone ($\mathrm{GRR}<0.35$).}
 \label{fig:grr}
 \end{figure}
 
@@ -511,7 +513,7 @@ Cross-language consistency holds, family-uncorrected: all five usable
 languages move in the hypothesized direction (exact one-sided $p = .031$).
 Under the frozen four-test Holm family this single runnable test
 is not family-significant on the conservative reading that unrunnable tests
-still occupy the family ($.031 \times 4 = .125$); on the reading that the
+still occupy the family ($0.03125 \times 4 = 0.125$); on the reading that the
 family comprises the tests that could run, it is significant. We adopt the
 conservative reading for every claim in this paper and report the other in
 this sentence only.
@@ -591,7 +593,8 @@ wrong lever (it damages the retrieval path that grounding bottlenecks on),
 and effort is better spent on the retrieval interface itself
 (native-label indexing, cross-lingual entity search), since selection is
 high wherever the right candidate is retrieved, if not uniformly
-near-ceiling (93--99\% for the stronger system, 76--95\% for the other). For
+near-ceiling (92.9--99.5\% for the system whose retrieval pattern we
+measured, 76.2--94.7\% for the other). For
 benchmark builders, the automated reliability estimate, pending audit
 confirmation, points toward a practical recipe: generation-oriented
 alignment gold can plausibly be reused for extraction evaluation if it is
