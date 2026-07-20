@@ -243,15 +243,15 @@ run's stats files.]}
 \toprule
 Language & Source items & Retained & Retained \% \\
 \midrule
-Hindi     & 842 & \afterruns{} & \afterruns{} \\
-Bengali   & 792 & \afterruns{} & \afterruns{} \\
-Marathi   & 736 & \afterruns{} & \afterruns{} \\
-Telugu    & 734 & \afterruns{} & \afterruns{} \\
-Tamil     & 656 & \afterruns{} & \afterruns{} \\
-Kannada   & 642 & \afterruns{} & \afterruns{} \\
-Malayalam & 615 & \afterruns{} & \afterruns{} \\
-Gujarati  & 530 & \afterruns{} & \afterruns{} \\
-English (control) & 470 & \afterruns{} & \afterruns{} \\
+Hindi     & 842 & 779 & 92.5 \\
+Bengali   & 792 & 718 & 90.7 \\
+Marathi   & 736 & 657 & 89.3 \\
+Telugu    & 734 & 631 & 86.0 \\
+Tamil     & 656 & 601 & 91.6 \\
+Kannada   & 642 & 549 & 85.5 \\
+Malayalam & 615 & 544 & 88.5 \\
+Gujarati  & 530 & 475 & 89.6 \\
+English (control) & 470 & 403 & 85.7 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -288,7 +288,21 @@ publishing whichever way these measurements fall: a miss rate at or above the
 threshold, together with a positive automated class-(ii) rate in at least
 seven of the eight languages, supports the claim that generation-oriented gold
 understates extraction precision; a miss rate below the threshold supports the
-pre-registered inverse claim that such reuse is reliable. \afterruns{audit + class-(ii) results.}
+pre-registered inverse claim that such reuse is reliable.
+
+The automated estimate came back decisively below threshold: across all 34
+(system, arm, language) cells, the share of not-in-gold predictions verifiable
+as live Wikidata statements never reaches 5\% (maximum 4.8\%, in one cell;
+median 1.3\%; pooled 389 of 30{,}171, 1.3\%). Under the frozen rule this
+licenses the inverse claim: strict re-grounding yields a benchmark whose
+precision estimates are reliable --- what the models predict beyond gold is
+overwhelmingly not knowledge the gold merely failed to record.
+A drop-classification audit of the retention step points the same way: in a
+pre-registered 50-item sample of dropped source items (classified before any
+scoring), all 50 are consistent with knowledge-base drift, and exactly one
+item in the full 660-drop pool exhibits the procedural signature the
+classification was designed to catch (an unparsed unit quantity).
+\afterruns{Tamil-audit miss rate (audit scheduled pre-submission).}
 
 \subsection{Pre-registration}
 All decision thresholds, statistical procedures, exclusion rules, and the
@@ -312,9 +326,16 @@ identical English pipeline) over the same low-resource items --- these two
 arms are item-paired --- plus the \textsc{english} control slice, which by
 construction contains different sentences (Section~\ref{sec:test},
 pairing note).
-Systems: \afterruns{2--3 open multilingual LLMs, 7--9B class, 4-bit
-quantized, zero- and few-shot; named with exact checkpoints and inference
-settings}.
+Systems: Qwen3-8B and Llama-3.1-8B-Instruct, both 4-bit (Q4\_K\_M) GGUF
+checkpoints served locally with seeded greedy-temperature settings, zero-shot;
+exact checkpoints, server build, and decoding parameters are in the released
+configuration. One mechanical artifact surfaced at first scoring: Llama-3.1
+echoes the canonicalization template's header line before answering, which the
+frozen parser's format-echo rule covered at the extraction stage but not the
+canonicalization stage; the completion of that rule (content-neutral, defined
+by the template string itself, provably inert for the non-echoing system) was
+recorded as a dated amendment before re-parsing from the frozen raw archives,
+and both pre- and post-fix scores are released.
 
 Two properties of the canonicalization interface hold identically across arms
 and matter for interpretation. First, extraction is open-vocabulary, but
@@ -336,8 +357,20 @@ stronger English retrieval path, so a finding of entity \emph{non-repair}
 cannot be an artifact of retrieval disadvantage --- while a
 both-components-repair outcome would inherit it as a caveat. We therefore
 decompose entity errors into retrieval misses versus selection errors from
-the archived candidate sets. \afterruns{candidate-retrieval recall per (arm,
-language) and the miss/selection decomposition.}
+the archived candidate sets.
+
+The decomposition inverts the presumed direction of the retrieval asymmetry.
+Measured subject-candidate recall@8 is \emph{higher} in \textsc{direct} than
+in \textsc{pivot} for seven of eight languages (Hindi $.612$ vs.\ $.518$;
+Marathi $.547$ vs.\ $.427$; Malayalam $.426$ vs.\ $.296$; Tamil $.249$ vs.\
+$.176$; Kannada is the exception at parity, $.215$ vs.\ $.217$): the
+native-language query with English top-up retrieves gold entities that
+English-side search on translated mentions loses. Selection, by contrast, is
+near-ceiling wherever retrieval succeeds --- given the gold entity among the
+candidates, the model selects it in 95--98\% of calls in \emph{every} cell,
+both systems, all arms. Entity grounding in this setting is therefore
+retrieval-bound, not selection-bound, and the \textsc{english} control is
+itself retrieval-limited (subject recall@8 $= .549$).
 
 \subsection{Gap Recovery Ratio}
 For metric $m \in \{\text{relation-F1}, \text{entity-F1}\}$ and each
@@ -385,32 +418,120 @@ mixed: the continuous GRR profile is published without forcing a headline
 verdict, led instead by the gold-reliability finding
 (Section~\ref{sec:instrument}).
 
-\afterruns{RESULTS: GRR table per language x system x metric with CIs;
-decision-table verdict row by row; headline branch outcome; QE-correlation
-check; synthetic-parallel probe result.}
+\subsection{Results}
+
+\paragraph{Usable cells.} The 8-point gap rule excludes more of the grid than
+anticipated, for two informative reasons. On entity-F1, the \textsc{english}
+ceiling is itself near the floor (Qwen3 $.098$, Llama-3.1 $.143$) --- entity
+grounding is retrieval-bound even in English --- so no language shows a
+measurable entity gap for Qwen3 (0 usable; Llama-3.1: 4, below the 5-language
+bar). On relation-F1, Llama-3.1's \textsc{direct} scores already sit at or
+above its own English ceiling in every language (e.g., Bengali $.609$ vs.\
+$.515$), leaving it nothing to repair (0 usable). Both metrics for Llama-3.1
+and entity-F1 for Qwen3 therefore fall to the pre-registered escape hatch:
+CIs published, no verdict. The one metric--system pair with a testable repair
+question is Qwen3 relation-F1, with five usable languages.
+
+\begin{table}[t]
+\centering
+\caption{Qwen3-8B relation-F1 by arm, with unclipped GRR (95\% bootstrap CI)
+and the frozen three-way classification for the five usable languages.
+Excluded cells (baseline gap $<8$ points): Hindi, Bengali, Tamil ---
+\textsc{pivot} exceeds \textsc{direct} in these as well (8/8 directionally).}
+\label{tab:grr}
+\begin{tabular}{lccccl}
+\toprule
+Lang & \textsc{direct} & \textsc{pivot} & \textsc{english} & GRR [CI] & Verdict \\
+\midrule
+gu & .324 & .467 & .438 & $+1.26$ [$+0.88,+1.74$] & repaired \\
+kn & .275 & .385 & .438 & $+0.67$ [$+0.48,+0.92$] & partial \\
+ml & .318 & .541 & .438 & $+1.86$ [$+1.42,+2.50$] & beyond ceiling \\
+mr & .343 & .469 & .438 & $+1.33$ [$+0.93,+1.68$] & repaired \\
+te & .348 & .419 & .438 & $+0.79$ [$+0.47,+1.06$] & repaired \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Relation repair.} Gujarati, Marathi, and Telugu meet the full
+\textsc{repaired} criterion ($\mathrm{GRR} \geq 0.75$ with the residual
+\textsc{english}$-$\textsc{pivot} CI including 0); Kannada is
+\textsc{partial} (improvement CI $[+.076,+.143]$ excludes 0). Malayalam
+exceeds the taxonomy: its residual CI excludes zero on the \emph{favorable}
+side ($[-.142,-.063]$) --- \textsc{pivot} lands significantly above the
+English ceiling, a case the frozen three-way rule did not anticipate; we
+report it as beyond-\textsc{repaired} under any monotone reading and count it
+toward no claim it would strengthen. Cross-language consistency holds: all
+five usable languages move in the hypothesized direction (exact one-sided
+$p = .031$). Under the frozen four-test Holm family this single runnable test
+is not family-significant on the conservative reading that unrunnable tests
+still occupy the family ($.031 \times 4 = .125$); on the reading that the
+family comprises the tests that could run, it is significant. We adopt the
+conservative reading for every claim in this paper and report the other in
+this sentence only.
+
+\paragraph{Verdict.} With entity-F1 underpowered on both systems, the
+confirmation criterion cannot be evaluated, and neither falsification branch
+triggers ($\mathrm{GRR}_{\text{rel}}$ is not below $0.35$ anywhere usable;
+both-repair cannot be assessed). The pre-registered outcome is therefore the
+\emph{mixed} branch: the continuous profile above is published without a
+forced headline verdict, and the paper leads with the gold-reliability
+finding (Section~\ref{sec:instrument}). Descriptively --- outside the verdict
+machinery --- the direction of the dissociation is uniform: \textsc{pivot}
+improves relation-F1 in 8/8 languages on Qwen3 (7/8 on Llama-3.1) while
+\emph{reducing} entity-F1 in 7/8 (Qwen3, e.g.\ Hindi $.216 \to .112$), and
+the retrieval decomposition above locates the entity-side damage in the
+translated query's weaker retrieval, not in model selection. The
+synthetic-parallel denominator probe is scheduled against the released
+harness; its absence bounds only the \textsc{english}-ceiling pairing caveat,
+which the within-language contrasts do not inherit.
 
 \section{Secondary Analyses}\label{sec:secondary}
 % C3 (if day-8 gate passed: Hindi anchor + 7-language transfer test), C4/C5-fragment
 % (exploratory, labeled), error taxonomy incl.\ hallucination structure (C6 dimension).
 
-\afterruns{C3: mREBEL (in-coverage anchor: Hindi) vs.\ zero-shot LLMs across
-the seven out-of-coverage languages --- inversion test per pre-registered rule.
-C4 (exploratory, labeled): tokenizer fertility vs.\ resource-share proxies as
-degradation predictors --- state the retention-differential caveat
-(per-language keep rates differ, so cross-language points differ in
-composition) and report the keep-rate-vs-GRR scatter. C5-fragment (exploratory, labeled): stability of the
-per-language degradation ordering across model scale. C6: taxonomy of
-hallucination-candidate structure --- dimension of the error analysis, never a
-claim.}
+\paragraph{Popularity stratification (pre-registered for the B3 branch;
+reported descriptively).} Entity-occurrence error rates in the \textsc{pivot}
+arm are flat across sitelink-popularity quartiles of the retained inventory:
+bottom-vs-top ratio $1.03$ (Qwen3; $.706$ vs.\ $.688$) and $0.89$
+(Llama-3.1), far from the $1.5$ criterion. Failures do not concentrate on
+obscure entities --- famous ones fail almost as often --- which is exactly
+what the retrieval-bound account predicts and an entity-coverage account
+would not.
+
+\paragraph{Sensitivity and composition checks (pre-registered).} Excluding
+every item touching the two audit-flagged predicate mappings
+(P112, P118) shifts no usable GRR by more than $0.04$. The keep-rate-vs-GRR
+association across the five usable cells is $\rho = 0.60$ (n$=5$,
+descriptive only, stated with the retention-differential caveat). GRR CI
+half-widths run $0.12$--$0.16$ (Llama-3.1 cells) and $0.22$--$0.54$ (Qwen3
+relation cells, wide where GRR is large); per-cell resample counts after the
+excluded-draw rule are released with the report.
+
+\afterruns{C3: mREBEL-vs-LLM inversion test --- contingent on the scope gate
+(mREBEL covers Hindi only of the study languages; keep/drop decision recorded
+at the gate). C5-fragment (exploratory, labeled): stability across model
+scale, if run. C6: taxonomy of hallucination-candidate structure ---
+dimension of the error analysis, never a claim. QE-correlation check.}
 
 \section{Implications and Limitations}\label{sec:implications}
 % For practitioners (translate first?) and benchmark builders (gold-reuse reliability).
 % Limitations: single-family breadth, gold reuse caveats, audit on one language.
 
-\afterruns{Implication paragraphs are branch-dependent and drafted after the
-verdict: practitioner guidance (when translating first is and is not worth
-it), and benchmark-builder guidance (what the measured gold-reuse reliability
-licenses).}
+For practitioners, the measured profile yields a component-level rule rather
+than a blanket one. If the quantity of interest is \emph{which relations} a
+low-resource text asserts, translating first is worth it in this setting:
+repair is consistent across usable languages and, in one, exceeds the English
+ceiling. If the quantity of interest is \emph{which entities} are involved,
+translation is the wrong lever --- it damages the retrieval path that
+grounding actually bottlenecks on --- and effort is better spent on the
+retrieval interface itself (native-label indexing, cross-lingual entity
+search), since selection is already near-ceiling everywhere once the right
+candidate is present. For benchmark builders, the reliability finding
+licenses a practical recipe: generation-oriented alignment gold can be reused
+for extraction evaluation if it is strictly re-grounded against the live KB
+first --- at the measured cost of a $\sim$11\% drop rate that is
+overwhelmingly KB drift, and with precision estimates that our
+incompleteness bound shows are not materially understated.
 
 \emph{Limitations.} The study covers open LLMs of a single size class under
 4-bit quantization; conclusions about scaling rest only on the labeled
