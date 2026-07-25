@@ -1,10 +1,15 @@
-% CCIS (llncs.cls). ANONYMIZED for double-blind review. One bracketed slot
-% remains (Instrument Validation, native-speaker audit miss rate), pending
-% the audit; all other content is final.
+% CCIS (llncs.cls). ANONYMIZED for double-blind review. The Tamil
+% native-speaker audit (Section 3, Instrument Validation) is scheduled prior
+% to submission and still pending as of this draft; all other content is
+% final.
 \documentclass{llncs}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
+% Let short end-of-section pages end naturally at the bottom instead of the
+% class default (\flushbottom) inflating the glue around a stranded heading
+% (e.g. the short Pre-registration subsection before Section 4).
+\raggedbottom
 
 \begin{document}
 
@@ -113,7 +118,8 @@ was determined by the results rather than selected after them.
 English control, constructed by reversing the manually annotated test split of
 XAlign~\cite{abhishek2022xalign} and deterministically re-grounding its
 English fact labels into Wikidata identifiers, with the adaptation's coverage
-and drop reasons reported per language (Section~\ref{sec:instrument}).
+reported per language and drop reasons released with the harness
+(Section~\ref{sec:instrument}).
 (2)~A validation of that benchmark as an instrument: a native-speaker audit of
 one full language subset plus automated live-Wikidata cross-checking of every
 scored prediction, yielding a quantified estimate of gold miss rate
@@ -121,10 +127,12 @@ scored prediction, yielding a quantified estimate of gold miss rate
 (3)~A pre-registered, component-separated measurement of what translation does
 and does not repair in low-resource KG population, with hierarchical-bootstrap
 uncertainty and a frozen decision table (Sections~\ref{sec:test}
-and~\ref{sec:secondary}). The measured outcome is the mixed branch:
-translation repairs relation identification, while entity grounding
-presents no verdict-eligible gap to repair and is, descriptively, reduced
-by translation for one of the two systems studied, in the evaluated setting.
+and~\ref{sec:secondary}). The measured outcome is the mixed branch: for the
+one system with a measurable relation-F1 gap to test, translation repairs
+relation identification, though not uniformly across its five usable
+languages; entity grounding presents no verdict-eligible gap to repair for
+either system and is, descriptively, reduced by translation for one of the
+two systems studied, in the evaluated setting.
 (4)~The complete harness, audit protocol, prompts, and Wikidata response cache
 for reproduction, released anonymously during review.
 
@@ -271,17 +279,22 @@ precision); (iii)~absent from Wikidata entirely (a hallucination candidate,
 analyzed taxonomically in Section~\ref{sec:secondary}). Class~(ii)
 verification uses the same cached Wikidata access layer as re-grounding, with
 literal-matching rules frozen with the prompts before any scoring.
+Predictions lacking a resolvable subject QID, property PID, or object are
+set aside before this split rather than forced into one of the three
+classes (pooled across all 34 cells, 19.4\% of predictions); already scored
+as errors under the primary metrics, their exclusion affects only this
+diagnostic's denominator, not precision.
 
 \subsection{Instrument Validation}
 Two independent checks estimate how far the adapted gold can be trusted.
-First, a native speaker audited one full language subset (Tamil; 656 source
-items) against written guidelines released with the benchmark, recording two
-judgments per item: whether each gold fact is genuinely asserted by the
-sentence (gold validity), and which sentence-asserted facts are absent from
-the gold, each cross-checked against Wikidata (gold incompleteness, the
-miss rate that claim C2 tests); the audit protocol treats the auditor as a
-measurement device, with the miss-rate threshold (5\%) fixed in the
-pre-registration. Second, the
+First, a native-speaker audit protocol, released with the benchmark, covers
+one full language subset (Tamil; 656 source items) and records two
+judgments per item against written guidelines: whether each gold fact is
+genuinely asserted by the sentence (gold validity), and which
+sentence-asserted facts are absent from the gold, each cross-checked
+against Wikidata (gold incompleteness, the miss rate that claim C2 tests);
+the protocol treats the auditor as a measurement device, with the
+miss-rate threshold (5\%) fixed in the pre-registration. Second, the
 automated class-(ii) rate provides a per-language, scalable estimate of gold
 incompleteness for all eight languages. The pre-registration commits us to
 publishing whichever way these measurements fall: a miss rate at or above the
@@ -295,7 +308,8 @@ The automated estimate came back decisively below threshold: across all 34
 as live Wikidata statements never reaches 5\% (maximum 4.8\%, in one cell;
 median 1.3\%; pooled 389 of 30{,}171, 1.3\%). The frozen rule keys the
 reliability determination itself to the native-speaker audit's miss rate,
-reported next: below 5\%, the inverse claim is licensed; strict
+assessed against the same 5\% threshold: below it, the inverse claim is
+licensed; strict
 re-grounding yields a benchmark whose precision estimates are reliable, and
 what the models predict beyond gold is overwhelmingly not knowledge the gold
 merely failed to record. The automated estimate is consistent with, and
@@ -539,9 +553,14 @@ which the within-language contrasts do not inherit.
 % QE-correlation sharpening check not run (omitted, not partial); C6
 % hallucination-candidate structure reported descriptively below.
 
+This section reports the remaining pre-registered secondary and exploratory
+analyses; several resolve to a confirmed drop or omission rather than a
+positive result.
+
 \paragraph{Popularity stratification (pre-registered for the B3 branch;
 reported descriptively).} Entity-occurrence error rates in the \textsc{pivot}
-arm are flat across sitelink-popularity quartiles of the retained inventory:
+arm are flat across sitelink-popularity (the count of Wikimedia sitelinks
+the entity has, a notability proxy) quartiles of the retained inventory:
 bottom-vs-top ratio $1.03$ (Qwen3; $.706$ vs.\ $.688$) and $0.89$
 (Llama-3.1), far from the $1.5$ criterion. Failures do not concentrate on
 obscure entities (famous ones fail almost as often), which is exactly
@@ -551,7 +570,7 @@ would not.
 \paragraph{Sensitivity and composition checks (pre-registered).} Excluding
 every item touching the two audit-flagged predicate mappings
 (P112, P118) shifts no usable GRR by more than $0.05$ (largest shift:
-Marathi, $1.334 \to 1.293$). The keep-rate-vs-GRR
+Marathi, $1.334 \to 1.293$). The retention-vs-GRR
 association across the five usable cells is $\rho = 0.60$ (n$=5$,
 descriptive only, stated with the retention-differential caveat). GRR CI
 half-widths run $0.12$--$0.16$ (Llama-3.1 cells) and $0.22$--$0.54$ (Qwen3
@@ -565,11 +584,12 @@ that includes only Hindi of the eight study languages
 uninformative for seven of the eight comparisons, a decision recorded at
 the gate, before any such run.
 
-\paragraph{Exploratory items not executed.} Two further pre-registered
+\paragraph{Exploratory items not executed.} Three further pre-registered
 exploratory items were not run in this study and are omitted rather than
-partially reported: the C5 fragment on repair-pattern stability across model
-scale, and the QE-correlation sharpening check relating CometKiwi estimates
-to residual \textsc{pivot}-arm error.
+partially reported: the C4 tokenizer-fertility-versus-resource-proxy
+correlate, the C5 fragment on repair-pattern stability across model scale,
+and the QE-correlation sharpening check relating CometKiwi estimates to
+residual \textsc{pivot}-arm error.
 
 \paragraph{Hallucination-candidate structure (C6).} Pooled across all 34
 (system, arm, language) cells, 30{,}171 predicted triples were absent from
