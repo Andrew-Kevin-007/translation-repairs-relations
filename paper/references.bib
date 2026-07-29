@@ -1,6 +1,14 @@
 % Citation integrity rule (day 1): entries enter this file ONLY after the work
 % was opened and verified in-session. Verification records:
-% admin/citation-verification-log.md. Everything else stays \citeneed{} in the tex.
+% admin/citation-verification-log.md (first 7 entries) and
+% admin/zeus-hod-revision-report.md Section G (the 20 entries added
+% 2026-07-29 during the HOD-revision pass). Everything else stays
+% \citeneed{} in the tex. Author lists given as "and others" are exactly
+% where the verifying session confirmed the lead author(s)/venue/DOI but did
+% not enumerate every co-author; that is a deliberate honesty marker, not an
+% omission to silently complete from memory.
+
+% ---------- original 7 (pre-HOD-revision) ----------
 
 @inproceedings{abhishek2022xalign,
   title     = {{XAlign}: Cross-lingual Fact-to-Text Alignment and Generation for Low-Resource Languages},
@@ -52,4 +60,198 @@
   author    = {Rei, Ricardo and Treviso, Marcos and Guerreiro, Nuno M. and Zerva, Chrysoula and Farinha, Ana C. and Maroti, Christine and de Souza, Jos{\'e} G. C. and Glushkova, Taisiya and Alves, Duarte M. and Lavie, Alon and Coheur, Luisa and Martins, Andr{\'e} F. T.},
   booktitle = {Proceedings of the Seventh Conference on Machine Translation (WMT)},
   year      = {2022}
+}
+
+% ---------- added 2026-07-29, HOD-revision pass (zeus-verified pool, admin/zeus-hod-revision-report.md Sec. G) ----------
+% G.1 Entity linking & candidate retrieval against Wikidata
+
+@article{decao2022mgenre,
+  title   = {Multilingual Autoregressive Entity Linking},
+  author  = {De Cao, Nicola and Wu, Ledell and Popat, Kashyap and Artetxe, Mikel and Goyal, Naman and Plekhanov, Mikhail and Zettlemoyer, Luke and Cancedda, Nicola and Riedel, Sebastian and Petroni, Fabio},
+  journal = {Transactions of the Association for Computational Linguistics},
+  volume  = {10},
+  pages   = {274--290},
+  year    = {2022},
+  doi     = {10.1162/tacl_a_00460}
+}
+
+@inproceedings{botha2020entitylinking100,
+  title     = {Entity Linking in 100 Languages},
+  author    = {Botha, Jan A. and Shan, Zifei and Gillick, Daniel},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {7833--7845},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.emnlp-main.630}
+}
+
+@inproceedings{wu2020blink,
+  title     = {Scalable Zero-shot Entity Linking with Dense Entity Retrieval},
+  author    = {Wu, Ledell and Petroni, Fabio and Josifoski, Martin and Riedel, Sebastian and Zettlemoyer, Luke},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {6397--6407},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.emnlp-main.519}
+}
+
+@inproceedings{decao2021genre,
+  title     = {Autoregressive Entity Retrieval},
+  author    = {De Cao, Nicola and Izacard, Gautier and Riedel, Sebastian and Petroni, Fabio},
+  booktitle = {Proceedings of the 9th International Conference on Learning Representations (ICLR)},
+  year      = {2021}
+}
+
+@article{moller2022wikidatasurvey,
+  title   = {Survey on {E}nglish Entity Linking on {W}ikidata: Datasets and approaches},
+  author  = {M{\"o}ller, Cedric and Lehmann, Jens and Usbeck, Ricardo},
+  journal = {Semantic Web},
+  volume  = {13},
+  number  = {6},
+  pages   = {925--966},
+  year    = {2022},
+  doi     = {10.3233/SW-212865}
+}
+
+@article{vrandecic2014wikidata,
+  title   = {{W}ikidata: A Free Collaborative Knowledgebase},
+  author  = {Vrande{\v{c}}i{\'c}, Denny and Kr{\"o}tzsch, Markus},
+  journal = {Communications of the ACM},
+  volume  = {57},
+  number  = {10},
+  pages   = {78--85},
+  year    = {2014},
+  doi     = {10.1145/2629489}
+}
+
+% G.2 Translate-test / pivot paradigm
+
+@inproceedings{conneau2018xnli,
+  title     = {{XNLI}: Evaluating Cross-lingual Sentence Representations},
+  author    = {Conneau, Alexis and Rinott, Ruty and Lample, Guillaume and Williams, Adina and Bowman, Samuel R. and Schwenk, Holger and Stoyanov, Veselin},
+  booktitle = {Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {2475--2485},
+  year      = {2018},
+  doi       = {10.18653/v1/D18-1269}
+}
+
+@inproceedings{artetxe2020translationartifacts,
+  title     = {Translation Artifacts in Cross-lingual Transfer Learning},
+  author    = {Artetxe, Mikel and Labaka, Gorka and Agirre, Eneko},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {7674--7684},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.emnlp-main.618}
+}
+
+@inproceedings{hu2020xtreme,
+  title     = {{XTREME}: A Massively Multilingual Multi-task Benchmark for Evaluating Cross-lingual Generalisation},
+  author    = {Hu, Junjie and Ruder, Sebastian and Siddhant, Aditya and Neubig, Graham and Firat, Orhan and Johnson, Melvin},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {119},
+  pages     = {4411--4421},
+  year      = {2020}
+}
+
+@inproceedings{ahuja2023mega,
+  title     = {{MEGA}: Multilingual Evaluation of Generative {AI}},
+  author    = {Ahuja, Kabir and others},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {4232--4267},
+  year      = {2023},
+  doi       = {10.18653/v1/2023.emnlp-main.258}
+}
+
+% G.3 Multilingual LLMs and their evaluation
+
+@article{yang2025qwen3,
+  title   = {Qwen3 Technical Report},
+  author  = {Yang, An and others},
+  journal = {arXiv preprint arXiv:2505.09388},
+  year    = {2025}
+}
+
+@article{grattafiori2024llama3,
+  title   = {The Llama 3 Herd of Models},
+  author  = {Grattafiori, Aaron and others},
+  journal = {arXiv preprint arXiv:2407.21783},
+  year    = {2024}
+}
+
+@inproceedings{deutsch2025wmt24pp,
+  title     = {{WMT24}++: Expanding the Language Coverage of {WMT24} to 55 Languages \& Dialects},
+  author    = {Deutsch, Daniel and Briakou, Eleftheria and Caswell, Isaac and others},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL 2025},
+  year      = {2025}
+}
+
+% G.4 KG population, text-to-triple, relation extraction
+
+@inproceedings{josifoski2022genie,
+  title     = {{GenIE}: Generative Information Extraction},
+  author    = {Josifoski, Martin and De Cao, Nicola and Peyrard, Maxime and Petroni, Fabio and West, Robert},
+  booktitle = {Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies},
+  pages     = {4626--4643},
+  year      = {2022},
+  doi       = {10.18653/v1/2022.naacl-main.342}
+}
+
+@inproceedings{wadhwa2023revisiting,
+  title     = {Revisiting Relation Extraction in the era of Large Language Models},
+  author    = {Wadhwa, Somin and Amir, Silvio and Wallace, Byron},
+  booktitle = {Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics},
+  pages     = {15566--15589},
+  year      = {2023},
+  doi       = {10.18653/v1/2023.acl-long.868}
+}
+
+% G.5 Indic NLP resources and benchmarks
+
+@inproceedings{doddapaneni2023indicxtreme,
+  title     = {Towards Leaving No {I}ndic Language Behind: Building Monolingual Corpora, Benchmark and Models for {I}ndic Languages},
+  author    = {Doddapaneni, Sumanth and Aralikatte, Rahul and Ramesh, Gowtham and Goyal, Shreya and Khapra, Mitesh M. and Kunchukuttan, Anoop and Kumar, Pratyush},
+  booktitle = {Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics},
+  pages     = {12402--12426},
+  year      = {2023},
+  doi       = {10.18653/v1/2023.acl-long.693}
+}
+
+% G.6 Low-resource NLP: resource tiers, typology, cross-lingual transfer
+
+@inproceedings{joshi2020stateandfate,
+  title     = {The State and Fate of Linguistic Diversity and Inclusion in the {NLP} World},
+  author    = {Joshi, Pratik and Santy, Sebastin and Budhiraja, Amar and Bali, Kalika and Choudhury, Monojit},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {6282--6293},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.acl-main.560}
+}
+
+@article{nllbteam2024scaling,
+  title   = {Scaling neural machine translation to 200 languages},
+  author  = {{NLLB Team} and Costa-juss{\`a}, Marta R. and others},
+  journal = {Nature},
+  volume  = {630},
+  number  = {8018},
+  pages   = {841--846},
+  year    = {2024}
+}
+
+@article{adelani2021masakhaner,
+  title   = {{MasakhaNER}: Named Entity Recognition for African Languages},
+  author  = {Adelani, David Ifeoluwa and others},
+  journal = {Transactions of the Association for Computational Linguistics},
+  volume  = {9},
+  pages   = {1116--1131},
+  year    = {2021},
+  doi     = {10.1162/tacl_a_00416}
+}
+
+% G.7 Pre-registration and reproducibility practice
+
+@inproceedings{vanmiltenburg2021preregistering,
+  title     = {Preregistering {NLP} Research},
+  author    = {van Miltenburg, Emiel and van der Lee, Chris and Krahmer, Emiel},
+  booktitle = {Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies},
+  pages     = {613--623},
+  year      = {2021}
 }

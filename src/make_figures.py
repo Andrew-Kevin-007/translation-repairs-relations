@@ -133,3 +133,59 @@ print("\n=== Fig 2 source values ===")
 for l, d, p in zip(langs8, d_vals, p_vals):
     print(l, "direct=", d, "pivot=", p)
 print("english control recall@8 =", en_recall)
+
+# ---------- Figure 3: per-language DIRECT vs PIVOT, relation-F1 and entity-F1, both models ----------
+# HOD-revision addition (2026-07-29). Same discipline as Figures 1-2: every
+# value read directly from outputs/score-main-v1r.json "cells" (all 8 study
+# languages are present there for both metrics/models regardless of the GRR
+# usability exclusion, since "cells" predates the 8-point-gap filter that only
+# applies to the "grr" section) -- zero hand-typed numbers.
+cells = sc["cells"]
+langs_all = ["hi", "bn", "te", "ta", "kn", "ml", "mr", "gu"]
+models2 = [("qwen3-8b", "Qwen3-8B"), ("llama31-8b", "Llama-3.1-8B-Instruct")]
+metrics2 = [("relation", "Relation-F1"), ("entity", "Entity-F1")]
+row_xlim = {"relation": (0.0, 0.85), "entity": (0.0, 0.26)}
+
+fig, axes = plt.subplots(2, 2, figsize=(7.2, 4.7), dpi=300)
+for row, (mkey, mlabel) in enumerate(metrics2):
+    for col, (model_key, model_label) in enumerate(models2):
+        ax = axes[row][col]
+        d_vals = [cells[f"{model_key}/{mkey}/{l}"]["direct"] for l in langs_all]
+        p_vals = [cells[f"{model_key}/{mkey}/{l}"]["pivot"] for l in langs_all]
+        order = sorted(range(len(langs_all)), key=lambda i: d_vals[i])
+        langs_o = [langs_all[i] for i in order]
+        d_o = [d_vals[i] for i in order]
+        p_o = [p_vals[i] for i in order]
+        ys = list(range(len(langs_o)))
+        for y, d, p in zip(ys, d_o, p_o):
+            ax.plot([min(d, p), max(d, p)], [y, y], color=MUTED, lw=1.0, zorder=1)
+        ax.plot(p_o, ys, "o", color=RED, ms=5, zorder=3, markeredgecolor="white",
+                markeredgewidth=0.5, alpha=0.85,
+                label="pivot" if (row == 0 and col == 0) else None)
+        ax.plot(d_o, ys, "o", color=BLUE, ms=5, zorder=3, markeredgecolor="white",
+                markeredgewidth=0.5, alpha=0.85,
+                label="direct" if (row == 0 and col == 0) else None)
+        ax.set_yticks(ys)
+        ax.set_yticklabels([LANG_NAME[l] for l in langs_o] if col == 0 else [])
+        ax.set_xlim(*row_xlim[mkey])
+        ax.set_title(f"{model_label}: {mlabel}", fontsize=8, color=INK, pad=3)
+        ax.spines[["top", "right", "left"]].set_visible(False)
+        ax.tick_params(left=False)
+        ax.grid(axis="x", color=GRID, lw=0.5, zorder=0)
+        ax.set_axisbelow(True)
+        if row == 1:
+            ax.set_xlabel("F1", fontsize=7.5)
+
+axes[0][0].legend(loc="lower right", frameon=False, fontsize=7,
+                   handletextpad=0.3, borderaxespad=0.2)
+fig.tight_layout(pad=0.4, h_pad=1.3, w_pad=1.1)
+fig.savefig(r"D:\Research\xlkg\paper\fig_comparison.pdf", bbox_inches="tight")
+print("wrote fig_comparison.pdf")
+plt.close(fig)
+
+print("\n=== Fig 3 (comparison) source ranges ===")
+for mkey, _ in metrics2:
+    for model_key, _ in models2:
+        vals = [cells[f"{model_key}/{mkey}/{l}"][arm]
+                for l in langs_all for arm in ("direct", "pivot")]
+        print(model_key, mkey, "min=", round(min(vals), 3), "max=", round(max(vals), 3))
