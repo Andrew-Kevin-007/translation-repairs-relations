@@ -4,8 +4,15 @@ Protocol (line-delimited JSON over stdio; parent: src/mt_backend.py):
   stdin  <- {"id": "...", "text": "...", "src_lang": "tam_Taml", "tgt_lang": "eng_Latn"}
   stdout -> {"id": "...", "translation": "..."}
 Loads the model once, then streams. "READY" is printed on stdout when warm.
-Model repo comes from argv[1] (default: dist-200M; runs use the 1B, recorded
-in the run config). Deterministic: beam search, no sampling.
+Model repo comes from argv[1] (default: dist-200M). CORRECTION 2026-07-29
+(zeus HOD-revision audit): this comment previously claimed "runs use the 1B";
+that was false. run_matrix.py's --mt-model defaults to None and
+run_matrix_forever.ps1 never passes it, so mt_backend.DEFAULT_MODEL
+(dist-200M) is what actually ran. Verified against data/mt_cache.sqlite:
+4,447 of 4,447 cached rows are attributed to
+ai4bharat/indictrans2-indic-en-dist-200M; zero rows for any other model.
+main.tex now names the checkpoint explicitly. Deterministic: beam search, no
+sampling.
 """
 
 import json
