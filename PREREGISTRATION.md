@@ -178,3 +178,66 @@ no model is re-run; extraction stage untouched) into a NEW results file
 (`outputs/parsed/main-v1.jsonl`) and its scored report are preserved
 unmodified, and the paper will disclose pre-fix Llama numbers alongside
 post-fix. This amendment is committed before the re-parse is executed.
+
+## Amendment 3 (2026-08-01, recording 2026-07-31 retrospectively; before the completion sample is drawn)
+
+**A6 — Tamil native-speaker audit: executed procedure and pre-specified
+completion sample.** The frozen protocol — `audit/tamil-audit-guidelines.md`
+and row 7 of the decision table — specifies a native-speaker audit of the
+full Tamil manually-annotated test slice, per item, covering the 601
+retained items (656 source; see Table 1).
+
+That is not what was executed. Under the SPELLL 2026 submission-deadline
+constraint (hard deadline 2026-08-03 AoE), the full per-item audit was not
+performed. In its place: (a) an automatic candidate screen was run over all
+601 retained items, proposing, per item, relations the sentence may assert
+that the gold lacks; (b) the screen surfaced 25 items as candidate
+gold-incompleteness cases; (c) a native Tamil speaker adjudicated all 25
+individually on 2026-07-31, judging for each whether the sentence itself
+asserts the candidate fact. Steps (a)-(c) were executed before this
+amendment was written; the amendment records them retrospectively, and
+they are not presented here as pre-registered.
+
+Of the 25 adjudicated items, the screen's own verdicts split 11 positive
+and 14 negative. The adjudicator upheld all 11 positives (screen precision
+11/11 on its own positive verdicts) and, on review of the 14 negatives,
+overturned 3 to positive: `ta-test-0031` (employer), `ta-test-0269`
+(employer), and `ta-test-0585` (country of citizenship). Across the 25
+adjudicated items this yields 14 true positives in total, of which the
+screen itself had caught 11 — screen recall of 11/14 on adjudicated items,
+a measured false-negative rate of approximately 21%. Adjudicated
+gold-incomplete items: 14 of 601 (2.33%).
+
+The remaining 576 items were marked not-incomplete by the automatic screen
+and were never individually reviewed. Because the screen's measured
+false-negative rate is nonzero, 14/601 is a lower bound on the true miss
+rate, not an estimate of it, and the row-7 5% threshold determination is
+not licensed on this figure alone. Reaching the 5% threshold would require
+16 further misses among the 576, a rate of about 2.8%.
+
+The only prospective element of this amendment is the following. A random
+sample of N = 100 items, drawn without replacement from the 576
+unadjudicated items, will be judged by the same native speaker under the
+same criterion, to estimate the screen's false-negative rate on unflagged
+items. Draw procedure, fixed here for reproducibility: take the 576
+item_ids not among the 25 adjudicated, sort them lexicographically, and
+select with Python `random.Random(20260731).sample(sorted_ids, 100)` —
+seed 20260731.
+
+The completion estimate is (14 + misses projected from the 100-item sample
+onto the remaining 576) / 601, reported with an interval. **The frozen 5%
+threshold and the row-7 C2 outcome mapping are not modified by this
+amendment**: at or above 5% supports the claim that generation-oriented
+gold understates extraction precision (§8, C2); below 5% licenses the
+pre-registered inverse claim, reliable reuse. The paper will report
+whichever way the completed estimate falls, and will describe the audit as
+it was actually run — automatic candidate screening plus native-speaker
+adjudication of the screened items and of a sampled completion check — not
+as a full per-item native-speaker audit.
+
+Execution discipline: this amendment is committed before the 100-item
+completion sample is drawn and judged.
+
+This amendment was drafted with AI assistance (disclosed per the paper's
+AI-assistance statement); the reported counts and rates were checked for
+arithmetic consistency before recording.
