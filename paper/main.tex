@@ -124,7 +124,7 @@ hypothesis, its decision thresholds, and the outcome-to-claim mapping were froze
 public pre-registration before any model output was scored
 (Section~\ref{sec:instrument}).
 
-This distinction matters because the two failure modes call for opposite
+The two failure modes call for opposite
 remedies. Failures of \emph{understanding} are remedied by
 better multilingual pretraining or inference-time translation; failures of
 \emph{canonicalization} are not, since a model can understand a translated
@@ -144,8 +144,7 @@ resource standards, low-resource~\cite{joshi2020stateandfate}.
 (1)~A text-to-triple extraction benchmark for eight Indic languages plus an
 English control, built by reversing XAlign's~\cite{abhishek2022xalign}
 manually annotated test split and deterministically re-grounding its
-English fact labels into Wikidata identifiers, with per-language coverage
-and drop reasons released with the harness (Section~\ref{sec:instrument}).
+English fact labels into Wikidata identifiers (Section~\ref{sec:instrument}).
 (2)~A validation of that benchmark as an instrument: automated live-Wikidata
 cross-checking of every scored prediction plus a screened native-speaker
 check for one language, yielding a quantified gold-incompleteness lower
@@ -153,26 +152,14 @@ bound (Section~\ref{sec:instrument}).
 (3)~A pre-registered, component-separated measurement of what translation
 does and does not repair in low-resource KG population, with
 hierarchical-bootstrap uncertainty and a frozen decision table
-(Sections~\ref{sec:test} and~\ref{sec:secondary}); the measured outcome is
-the mixed branch described above.
-
-\subsection{Aim and Objectives}\label{sec:aims}
-Three further objectives run through the paper beyond the primary
-hypothesis: decomposing entity-grounding failure into retrieval versus
-selection
-(Section~\ref{sec:retrieval-decomp}); quantifying uncertainty with a
-hierarchical bootstrap under a Holm-Bonferroni-corrected rule
-(Sections~\ref{sec:grr}--\ref{sec:decision}); and examining, exploratorily,
-whether the dissociation holds across the study's language families
-(Section~\ref{sec:grouping}).
+(Sections~\ref{sec:test} and~\ref{sec:secondary}).
 
 \section{Related Work}\label{sec:related}
 
 \textbf{Multilingual relation extraction and KG population.}
 Supervised multilingual relation extraction is anchored by
 RED\textsuperscript{FM}~\cite{huguetcabot2023redfm} and its mREBEL
-extractor, whose training covers only Hindi of the eight languages here
-(Section~\ref{sec:secondary}). Earlier monolingual end-to-end
+extractor. Earlier monolingual end-to-end
 extraction~\cite{huguetcabot2021rebel} does not separate relation
 identification from entity grounding; LLM-era extraction reframes it as
 constrained generation against a
@@ -192,16 +179,6 @@ survey finds most approaches lean on labels and descriptions
 alone~\cite{moller2022wikidatasurvey}, the interface this paper's
 candidate search measures.
 
-\textbf{Fact--text resources for Indic languages.}
-XAlign~\cite{abhishek2022xalign} aligns Wikidata facts with sentences in
-Indic languages for \emph{fact-to-text generation} (this study uses the
-v2.0 release, which adds Malayalam) and includes a manually annotated test
-set. We use it in the reversed direction (sentences
-as input, aligned facts as extraction gold), a construction that is ours,
-not the original authors', whose validity we treat as a claim requiring
-evidence (Section~\ref{sec:instrument}); its reliability for reuse as
-extraction gold is itself a pre-registered secondary question.
-
 \textbf{Translate-test versus direct multilingual inference.}
 Translate-test entered cross-lingual NLP as a baseline that translating test
 data outperforms other options~\cite{conneau2018xnli}, became standard
@@ -210,8 +187,8 @@ and persists in the LLM era, where models underuse their multilingual
 capacity when prompted in non-English languages~\cite{etxaniz2024think}.
 That literature evaluates end-to-end
 scores, not \emph{which component} translation repairs, and can understate a
-real risk, translation itself introduces artifacts that change what is
-measured~\cite{artetxe2020translationartifacts} (Section~\ref{sec:implications}).
+real risk, translation itself introduces measurement
+artifacts~\cite{artetxe2020translationartifacts} (Section~\ref{sec:implications}).
 Our design imports the comparison into KG population and decomposes it,
 using IndicTrans2~\cite{gala2023indictrans2} (all 22 scheduled Indian
 languages) plus a pre-registered CometKiwi~\cite{rei2022cometkiwi}
@@ -219,35 +196,32 @@ quality-estimation check relating residual \textsc{pivot}-arm error to MT
 quality, not run in this study (Section~\ref{sec:secondary}).
 
 \subsection{Problem Statement}\label{sec:problem}
-The literature above leaves a specific, testable gap. End-to-end
+End-to-end
 extractors and multilingual entity-linking evaluations alike report one
 aggregate
 score~\cite{huguetcabot2023redfm,huguetcabot2021rebel,wu2020blink,botha2020entitylinking100},
 and translate-test evidence that English translation improves multilingual
 inference~\cite{etxaniz2024think} is reported the same way, so neither a
 missed fact's component (relation versus entity), nor, on the entity side,
-its sub-mechanism (retrieval versus disambiguation), nor which sub-task of
-a structured extraction pipeline actually benefits is separately visible.
+its sub-mechanism (retrieval versus disambiguation) is separately visible.
 Fact-to-text alignment resources built for generation, such as
 XAlign~\cite{abhishek2022xalign}, are attractive to reuse as extraction
-gold but carry no established reliability estimate for that direction, and
-a further proposed driver of low-resource gaps, tokenizer fertility (up to
+gold but carry no established reliability estimate for that direction, and tokenizer fertility (up to
 fifteen times more tokens for the same text in some
-languages~\cite{petrov2023tokenizers}), is rarely tested jointly with a
+languages~\cite{petrov2023tokenizers}) is rarely tested jointly with a
 component-level failure decomposition.
 
 \subsection{Distinction from Prior Work}\label{sec:distinction}
 This study proposes no new extraction system and no hybrid of the two LLMs
 studied; it proposes a measurement design, positioned against prior work on
-dimensions rather than accuracy, since no existing system is evaluated on
-this benchmark under comparable conditions.
+dimensions rather than accuracy.
 RED\textsuperscript{FM}/mREBEL~\cite{huguetcabot2023redfm}
-performs extraction only, with one supervised seq2seq model, covers one of
-the eight study languages, and is neither pre-registered nor tested for gold
-reliability; this study evaluates extraction and canonicalization together,
-separates the relation and entity contributions, covers all eight languages
-with two open local 8B systems under a frozen decision table, and validates
-its own benchmark as an instrument (Section~\ref{sec:instrument}).
+performs extraction only, with one supervised seq2seq model on one of the
+eight study languages, neither pre-registered nor gold-reliability-tested;
+this study evaluates extraction and canonicalization together, separating
+relation from entity contributions across all eight languages with two
+open local 8B systems, a frozen decision table, and its own instrument
+validation (Section~\ref{sec:instrument}).
 XAlign~\cite{abhishek2022xalign} is a fact-to-text generation resource over
 Indic languages, evaluated for that direction only; this study
 supplies the reverse direction and the reliability evaluation neither prior
@@ -259,7 +233,8 @@ work provides.
 % pre-registration summary + pointer to the frozen file (anonymized repo link).
 
 \subsection{From Alignment Resource to Extraction Benchmark}
-The manually annotated XAlign test split provides, per language, sentence-level
+The manually annotated XAlign (v2.0, which adds Malayalam) test split
+provides, per language, sentence-level
 alignments between native-language Wikipedia text and Wikidata facts rendered
 as English labels (subject, predicate, object, plus qualifiers); a
 native-speaker review of the Tamil slice found source fluency uneven, with
@@ -584,8 +559,8 @@ gold-reliability finding (Section~\ref{sec:instrument}).
 
 \subsection{Results}\label{sec:results}
 
-\paragraph{Usable cells.} The 8-point gap rule excludes more of the grid than
-anticipated, for two informative reasons. On entity-F1, the \textsc{english}
+\paragraph{Usable cells.} The 8-point gap rule excludes most of the grid.
+On entity-F1, the \textsc{english}
 ceiling is itself near the floor (Qwen3 $.098$, Llama-3.1 $.143$). Entity
 grounding is retrieval-bound even in English, so no language shows a
 measurable entity gap for Qwen3 (0 usable; Llama-3.1: 4, below the 5-language
@@ -741,13 +716,11 @@ scheme and property inventory.
 % For practitioners (translate first?) and benchmark builders (gold-reuse reliability).
 % Limitations: single-family breadth, gold reuse caveats, audit on one language.
 
-The measured profile yields a component-level rule for practitioners rather
-than a blanket one. Where \emph{which relations} a low-resource text asserts
+Where \emph{which relations} a low-resource text asserts
 is the quantity of interest, translating first is worth it. Where
 \emph{which entities} are involved, translation is the wrong lever for the
 system whose retrieval pattern we measured; effort is better spent on the
-retrieval interface itself (native-label indexing, cross-lingual entity
-search), as selection accuracy given retrieval is high for both systems
+retrieval interface itself, as selection accuracy given retrieval is high for both systems
 (Section~\ref{sec:retrieval-decomp}).
 For benchmark builders: generation-oriented
 alignment gold can plausibly be reused for extraction evaluation if it is
@@ -779,7 +752,7 @@ review shows only that fluency is uneven, not any sentence's provenance, so
 this is unexcluded, not demonstrated, and does not touch the entity-side
 result, whose retrieval-bound mechanism (Section~\ref{sec:retrieval-decomp})
 is independent of source fluency. The \textsc{pivot} arm uses one MT engine,
-IndicTrans2's distilled 200M checkpoint rather than its 1B flagship
+IndicTrans2's distilled~200M checkpoint rather than its 1B flagship
 (Section~\ref{sec:arms}); the QE correlation would bound, but was not run to
 remove, MT-engine and MT-quality specificity. Relation canonicalization
 is scored as selection over a closed property
@@ -798,10 +771,8 @@ decoding run rather than repeated sampling, so the results carry no estimate
 of decoding variance.
 
 \section{Conclusion}\label{sec:conclusion}
-This study asked whether the low-resource penalty in extracting Wikidata
-triples from Indic-language text is a failure of relation understanding or
-of entity canonicalization. The
-evidence dissociates the two: translation repairs relation identification
+The
+evidence dissociates the two hypothesized failure modes: translation repairs relation identification
 (Qwen3-8B, five usable languages, $p=.031$ uncorrected; descriptively 7/8 for
 Llama-3.1-8B-Instruct) but presents no verdict-eligible entity-grounding gap
 under the frozen rule, and descriptively reduces Qwen3-8B's entity-F1 in 7/8
