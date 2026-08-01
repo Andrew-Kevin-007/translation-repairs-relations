@@ -1,7 +1,8 @@
 % CCIS (llncs.cls). ANONYMIZED for double-blind review. The Tamil
-% native-speaker audit (Section 3, Instrument Validation) is scheduled prior
-% to submission and still pending as of this draft; all other content is
-% final.
+% native-speaker audit (Section 3, Instrument Validation) ran as an
+% automatic screen plus adjudication of the 25 surfaced candidates, not the
+% full per-item audit the protocol specifies (Amendments A6/A7 in
+% PREREGISTRATION.md); all content is final as of this draft.
 \documentclass{llncs}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -89,8 +90,9 @@ IndicTrans2~\cite{gala2023indictrans2}) arms, with component-level scoring
 that separates relation and entity errors, against a benchmark we adapt by
 deterministically re-grounding an existing fact-to-text alignment
 resource's~\cite{abhishek2022xalign} English fact labels in Wikidata,
-validated by a native-speaker audit and automatic cross-checking against the
-live knowledge base. The frozen decision table returns a mixed verdict:
+validated by automatic cross-checking against the live knowledge base and a
+partial native-speaker check. The frozen decision table returns a mixed
+verdict:
 translation improves relation-F1 for Qwen3-8B in every language and for
 Llama-3.1-8B-Instruct in seven of eight (unclipped gap recovery $+0.67$ to
 $+1.85$ over the five Qwen3-8B languages with a measurable baseline gap;
@@ -102,10 +104,10 @@ decomposition attributes this to retrieval rather than selection (the gold
 entity is chosen in 92.9--99.5\% of calls once retrieved), a pattern
 specific to Qwen3-8B and not replicated by Llama-3.1-8B-Instruct
 (76.2--94.7\%, inverted retrieval direction). The automated validation bound
-supports the pre-registered reliability claim for gold reuse, pending
-native-speaker confirmation: at most 4.8\% (pooled 1.3\%) of predictions
-absent from the adapted gold are true in the live knowledge base. We release
-the benchmark, audit protocol, and evaluation harness.
+supports the pre-registered reliability claim for gold reuse: at most
+4.8\% (pooled 1.3\%) of predictions absent from the adapted gold are true
+in the live knowledge base. We release the benchmark, audit protocol, and
+evaluation harness.
 \end{abstract}
 
 \section{Introduction: The Hypothesis and Why It Matters}\label{sec:intro}
@@ -144,10 +146,10 @@ English control, built by reversing XAlign's~\cite{abhishek2022xalign}
 manually annotated test split and deterministically re-grounding its
 English fact labels into Wikidata identifiers, with per-language coverage
 and drop reasons released with the harness (Section~\ref{sec:instrument}).
-(2)~A validation of that benchmark as an instrument: a native-speaker audit
-of one full language subset plus automated live-Wikidata cross-checking of
-every scored prediction, yielding a quantified gold miss-rate estimate
-(Section~\ref{sec:instrument}).
+(2)~A validation of that benchmark as an instrument: automated live-Wikidata
+cross-checking of every scored prediction plus a screened native-speaker
+check for one language, yielding a quantified gold-incompleteness lower
+bound (Section~\ref{sec:instrument}).
 (3)~A pre-registered, component-separated measurement of what translation
 does and does not repair in low-resource KG population, with
 hierarchical-bootstrap uncertainty and a frozen decision table
@@ -155,11 +157,9 @@ hierarchical-bootstrap uncertainty and a frozen decision table
 the mixed branch described above.
 
 \subsection{Aim and Objectives}\label{sec:aims}
-The aim of this study is to determine, at the level of individual pipeline
-components rather than end-to-end task score, whether machine translation
-repairs the low-resource penalty in extracting Wikidata triples from
-Indic-language text. Three further objectives run through the paper:
-decomposing entity-grounding failure into retrieval versus selection
+Three further objectives run through the paper beyond the primary
+hypothesis: decomposing entity-grounding failure into retrieval versus
+selection
 (Section~\ref{sec:retrieval-decomp}); quantifying uncertainty with a
 hierarchical bootstrap under a Holm-Bonferroni-corrected rule
 (Sections~\ref{sec:grr}--\ref{sec:decision}); and examining, exploratorily,
@@ -183,9 +183,8 @@ component.
 \textbf{Entity linking against Wikidata.}
 Entity canonicalization here grounds mentions in
 Wikidata~\cite{vrandecic2014wikidata}, an instance of multilingual entity
-linking's retrieve-then-rerank design~\cite{wu2020blink}: retrieve, then
-disambiguate, where Section~\ref{sec:retrieval-decomp} shows this
-study's failures concentrate. Autoregressive and cross-lingual linking
+linking's retrieve-then-rerank design~\cite{wu2020blink}, where
+Section~\ref{sec:retrieval-decomp} shows this study's failures concentrate. Autoregressive and cross-lingual linking
 systems~\cite{decao2022mgenre} and large-scale
 evaluations~\cite{botha2020entitylinking100} report quality degrading with
 language coverage independent of the model itself, and a Wikidata-specific
@@ -262,8 +261,11 @@ work provides.
 \subsection{From Alignment Resource to Extraction Benchmark}
 The manually annotated XAlign test split provides, per language, sentence-level
 alignments between native-language Wikipedia text and Wikidata facts rendered
-as English labels (subject, predicate, object, plus qualifiers). Two
-transformations produce an extraction benchmark from it: \emph{reversal},
+as English labels (subject, predicate, object, plus qualifiers); a
+native-speaker review of the Tamil slice found source fluency uneven, with
+frequent machine-translation-like phrasing (inconsistent transliteration,
+literal calendar constructions, templated boilerplate). Two transformations
+produce an extraction benchmark from it: \emph{reversal},
 treating the sentence as input and its aligned facts as the triples an
 extractor should recover (by construction a set of facts genuinely asserted
 by the text, since the original annotation asks which facts the sentence
@@ -282,8 +284,8 @@ whose labels have drifted since XAlign's snapshot (released with
 per-predicate match types); a lone non-exact search candidate is accepted
 but flagged for post-hoc review. Subjects resolve by retrieving name
 candidates and scoring each by how many of the item's own gold facts its
-live Wikidata claims corroborate, so an item's facts disambiguate its own
-subject. Objects are never resolved by free search: an entity object's QID
+live Wikidata claims corroborate. Objects are never resolved by free
+search: an entity object's QID
 is accepted only if it appears among the resolved subject's own claim values
 for that property with a matching English label, while date and quantity
 objects are normalized to a literal and accepted only if that literal
@@ -342,21 +344,21 @@ any scoring; or absent from Wikidata entirely (a hallucination candidate,
 analyzed taxonomically in Section~\ref{sec:secondary}). The exact procedure
 is released with the harness (\texttt{wikidata\_check.py}). Predictions
 lacking a resolvable subject QID, property PID, or object are set aside
-before this split rather than forced into one of the three classes (pooled
-across all 34 cells, 19.4\% of predictions); already scored as errors under
+before this split (pooled across all 34 cells, 19.4\% of predictions);
+already scored as errors under
 the primary metrics, their exclusion affects only this diagnostic's
 denominator, not precision.
 
 \subsection{Instrument Validation}
 Two independent checks estimate how far the adapted gold can be trusted. A
-native-speaker audit protocol, released with the benchmark, covers one full
-language subset (601 retained Tamil items of 656 source, Table~\ref{tab:gold})
-and records two judgments per item against written guidelines: whether each
-gold fact is genuinely asserted by the sentence (gold validity), and which
-sentence-asserted facts are absent from the gold (gold incompleteness, the miss
-rate claim C2 tests), each cross-checked against Wikidata; the auditor is
-treated as a measurement device, with the miss-rate threshold (5\%) fixed in
-the pre-registration.
+native-speaker audit protocol, released with the benchmark, specifies
+coverage of one full language subset (601 retained Tamil items of 656
+source, Table~\ref{tab:gold}) and two judgments per item against written
+guidelines: whether each gold fact is genuinely asserted by the sentence
+(gold validity), and which sentence-asserted facts are absent from the gold
+(gold incompleteness, the miss rate claim C2 tests), each cross-checked
+against Wikidata; the auditor is treated as a measurement device, with the
+miss-rate threshold (5\%) fixed in the pre-registration.
 The automated class-(ii) rate separately provides a scalable per-language
 estimate of gold incompleteness for all eight languages. The pre-registration
 commits to publishing whichever way these measurements fall: a miss rate at
@@ -364,6 +366,28 @@ or above threshold, together with a positive automated class-(ii) rate in at
 least seven of eight languages, supports the claim that generation-oriented
 gold understates extraction precision; a miss rate below threshold supports
 the pre-registered inverse claim that such reuse is reliable.
+
+Under the submission deadline, the full per-item protocol was not executed;
+instead, an automatic candidate screen proposed, across all 601 retained
+items, any relation the sentence may assert that the gold lacks, and a
+native speaker adjudicated all 25 items the screen surfaced, confirming 14
+gold-incomplete (screen recall 11/14 on adjudicated
+items, a false-negative rate of about 21\%; Amendment~A6). Nationality
+adjectives were counted only when attributed to the person, not when
+modifying an office or institution (e.g.\ ``Singapore's prime minister'').
+Adjudicated gold-incomplete items: 14 of 601 (2.33\%), a lower bound rather
+than an estimate: the remaining 576 items were never individually reviewed,
+and measured screen recall is 11/14. The pre-registered $\geq$5\% threshold
+(30/601 $=$ 4.99\% falls short; 31/601 $=$ 5.16\%) is not licensed on this
+figure alone; C2's reliability determination instead rests on the automated
+class-(ii) bound below. A pre-specified 100-item completion sample over the
+unadjudicated items was drawn, judged, and discarded as unusable; no
+further native-speaker sampling was performed before submission
+(Amendment~A7). Two further gold-validity errors surfaced in
+passing: \texttt{ta-test-0029}'s residence (California) over-specifies a
+sentence asserting only birth in Los Angeles; \texttt{ta-test-0516}'s
+education (University of Manchester) over-specifies a sentence describing
+continuing research there, an employment relation, not a degree.
 
 The automated estimate came back decisively below threshold: across all 34
 (system, arm, language) cells, the share of not-in-gold predictions
@@ -375,9 +399,7 @@ drop-classification audit of the retention step points the same way: in a
 pre-registered 50-item sample of dropped source items, all 50 are consistent
 with knowledge-base drift, and exactly one item in the full 660-drop pool
 exhibits the procedural signature the classification was designed to catch
-(an unparsed unit quantity). The native-speaker audit itself is scheduled
-prior to submission; its miss rate, against the same 5\% threshold, is
-reported here alongside the automated bound once complete.
+(an unparsed unit quantity).
 
 \subsection{Pre-registration}
 All decision thresholds, statistical procedures, exclusion rules, and the
@@ -404,7 +426,7 @@ unverified.
 configuration.}
 \label{tab:params}
 \footnotesize
-{\renewcommand{\arraystretch}{1.15}
+{\renewcommand{\arraystretch}{1.0}
 \begin{tabular}{p{3.3cm}p{4.0cm}p{4.0cm}}
 \toprule
  & Qwen3-8B & Llama-3.1-8B-Instruct \\
@@ -479,8 +501,7 @@ conservative for the hypothesis at design time. We decompose entity errors,
 per system, arm, and language, into subject recall@8 (whether the gold
 subject QID appears among the archived retrieved candidates) and selection
 given retrieved (whether the model's chosen QID equals gold, conditional on
-that retrieval having succeeded; exact procedure released with the
-harness).
+that retrieval having succeeded).
 
 The decomposition inverts the presumed direction of the retrieval asymmetry
 for Qwen3-8B, the system driving the paper's usable relation-repair
@@ -523,9 +544,9 @@ not in the released score report; nothing below depends on it). Cells whose
 baseline gap $(m_{\textsc{english}} - m_{\textsc{direct}})$ is under 8 F1
 points are excluded from verdicts as underpowered (logged and reported); if
 a metric retains fewer than five usable languages, its verdict is declared
-underpowered and only CIs are reported. The exclusion rule above and the
-per-cell verdict test detailed in Section~\ref{sec:decision} are implemented
-exactly as specified, released as \texttt{score.py}; uncertainty comes from
+underpowered and only CIs are reported. That rule and the per-cell verdict
+test of Section~\ref{sec:decision} are released as \texttt{score.py};
+uncertainty comes from
 a hierarchical bootstrap (10{,}000 resamples, 95\% CIs, released
 as \texttt{bootstrap.py}): item-paired for \textsc{pivot}-vs-\textsc{direct},
 independent resampling for the unpaired \textsc{english} term. Because the
@@ -675,8 +696,7 @@ large).
 gate recorded a drop: mREBEL, the supervised baseline, has training coverage
 that includes only Hindi of the eight study languages
 (Section~\ref{sec:related}), so an inversion test against it would be
-uninformative for seven of the eight comparisons, a decision recorded at
-the gate, before any such run.
+uninformative for seven of the eight comparisons.
 
 \paragraph{Exploratory items not executed.} Three further pre-registered
 exploratory items were not run in this study and are omitted rather than
@@ -696,8 +716,7 @@ This grouping analysis is exploratory and post-hoc: language family, script,
 and resource tier are not pre-registered variables, no amendment governs it,
 and it contributes to no verdict; it is reported because the null result is
 informative. Splitting the eight languages into Indo-Aryan and Dravidian
-families, an exact 4-versus-4 permutation test over all 70 relabelings
-(procedure released with the harness) finds nothing: the smallest $p$ across
+families, an exact 4-versus-4 permutation test over all 70 relabelings finds nothing: the smallest $p$ across
 20 such tests is $.1143$, against a minimum attainable two-sided $p$ of
 $.0286$ at this sample size, and the dissociation itself is far from
 separating by family ($p=.771$ Qwen3, $p=.543$ Llama-3.1). What does
@@ -735,7 +754,8 @@ alignment gold can plausibly be reused for extraction evaluation if it is
 strictly re-grounded against the live KB first, at the measured cost of a
 $\sim$11\% drop rate that is overwhelmingly KB drift, with precision
 estimates our automated incompleteness bound suggests are not materially
-understated, pending audit confirmation.
+understated, consistent with but not independently confirmed by the
+partial Tamil adjudication (Section~\ref{sec:instrument}).
 
 \emph{Limitations.} The study covers open LLMs of a single size class under
 4-bit quantization; conclusions about scaling rest only on the labeled
@@ -747,9 +767,19 @@ for latency parity with Llama-3.1, so its scores here are not comparable to
 published thinking-mode Qwen3 benchmarks. The gold inherits XAlign's
 person-biography domain and its 2020--2021 snapshot, mitigated but not
 eliminated by strict retention and live-Wikidata cross-checking. The
-native-speaker audit covers one of the eight languages; the other seven rely
-on the automated incompleteness estimate. The \textsc{pivot} arm uses one MT
-engine, IndicTrans2's distilled 200M checkpoint rather than its 1B flagship
+native-speaker check covers one language and, within it, only the 25 items
+an automatic screen surfaced of 601 (Section~\ref{sec:instrument}); the
+remaining 576 Tamil items and the other seven languages rely on the
+automated incompleteness estimate. A related, unexcluded confound affects
+the relation-repair result only: if part of the Tamil source was itself
+translated from English, the \textsc{pivot} arm's step back to English
+partially round-trips it, and recovered English could sit closer to the
+original phrasing than natively authored text would. The native-speaker
+review shows only that fluency is uneven, not any sentence's provenance, so
+this is unexcluded, not demonstrated, and does not touch the entity-side
+result, whose retrieval-bound mechanism (Section~\ref{sec:retrieval-decomp})
+is independent of source fluency. The \textsc{pivot} arm uses one MT engine,
+IndicTrans2's distilled 200M checkpoint rather than its 1B flagship
 (Section~\ref{sec:arms}); the QE correlation would bound, but was not run to
 remove, MT-engine and MT-quality specificity. Relation canonicalization
 is scored as selection over a closed property
@@ -780,7 +810,7 @@ specific to Qwen3-8B (Section~\ref{sec:retrieval-decomp}). The benchmark
 this measurement relies on is a reuse of generation-oriented alignment gold
 whose reliability we treated as a claim requiring evidence: the automated
 cross-check keeps the not-in-gold-but-true rate below the pre-registered
-5\% threshold in every cell, pending native-speaker confirmation.
+5\% threshold in every cell.
 
 \emph{Future work.} Direct extensions are the synthetic-parallel probe and
 CometKiwi correlation (prepared but not run), a model-size sweep testing
