@@ -284,7 +284,7 @@ contrast.
 \caption{Adapted gold per language: source items and retained items after
 strict all-facts resolution.}
 \label{tab:gold}
-\begin{tabular}{lrrr@{\hskip 8mm}lrrr}
+\begin{tabular}{l@{\hskip 4mm}rrr@{\hskip 9mm}l@{\hskip 4mm}rrr}
 \toprule
 Language & Source & Retained & \% & Language & Source & Retained & \% \\
 \midrule
@@ -401,8 +401,9 @@ unverified.
 configuration.}
 \label{tab:params}
 \footnotesize
-{\renewcommand{\arraystretch}{1.0}
-\begin{tabular}{p{3.3cm}p{4.0cm}p{4.0cm}}
+{\renewcommand{\arraystretch}{1.0}\setlength{\tabcolsep}{4pt}%
+\hyphenpenalty=10000 \exhyphenpenalty=10000 \sloppy
+\begin{tabular}{p{3.6cm}p{3.85cm}p{3.9cm}}
 \toprule
  & Qwen3-8B & Llama-3.1-8B-Instruct \\
 \midrule
@@ -581,7 +582,7 @@ case falls outside that taxonomy, marked). Excluded cells (baseline gap
 $<8$ points): Hindi, Bengali, Tamil; \textsc{pivot} exceeds
 \textsc{direct} in these as well (8/8 directionally).}
 \label{tab:grr}
-\begin{tabular}{lccccl}
+\begin{tabular}{l@{\hskip 4mm}ccc@{\hskip 5mm}c@{\hskip 5mm}l}
 \toprule
 Lang & \textsc{direct} & \textsc{pivot} & \textsc{english} & GRR [CI] & Verdict \\
 \midrule
