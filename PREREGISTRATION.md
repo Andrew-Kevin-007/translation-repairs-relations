@@ -241,3 +241,49 @@ completion sample is drawn and judged.
 This amendment was drafted with AI assistance (disclosed per the paper's
 AI-assistance statement); the reported counts and rates were checked for
 arithmetic consistency before recording.
+
+## Amendment 4 (2026-08-01, recording the outcome of the A6-authorized completion sample, drawn and judged the same day)
+
+**A7 — Completion sample outcome: drawn, judged, found unusable,
+discarded.** The 100-item completion sample Amendment A6 authorized was
+drawn on 2026-08-01 by the exact procedure specified there (the 576
+item_ids not among the 25 adjudicated, sorted lexicographically,
+`random.Random(20260731).sample(sorted_ids, 100)`, seed 20260731) and
+judged by the same native speaker the same day.
+
+The returned judgments are not usable and are not reported as a result: 96
+of the 100 sampled items came back marked gold-incomplete. This is
+irreconcilable with both independent measurements already on record — the
+automated class-(ii) rate (at most 4.8% in any single (system, arm,
+language) cell, 1.3% pooled across 30,171 predictions) and Amendment A6's
+own adjudication (14 of 25 screen-flagged candidates, 56%, confirmed
+gold-incomplete, on a sample the screen had already enriched for likely
+misses) — and with the design of the completion sample itself, drawn
+specifically from the 576 items the screen did NOT flag, where, given the
+screen's demonstrated recall, the true rate should run lower than the
+flagged-candidate rate, not nearly double it. No reading of the decision
+rule reconciles a 96% positive rate on unflagged items with either prior
+measurement. The completeness criterion the guidelines specify — whether
+the sentence itself asserts the candidate fact, under the cardinal
+no-inference rule (`audit/tamil-audit-guidelines.md`, step 2) — was
+evidently not applied as specified when this batch was judged. The data is
+discarded in full rather than adjusted, re-weighted, or partially credited.
+
+C2's threshold determination therefore rests, at submission, on two
+measurements only: the adjudication lower bound (14 of 601 adjudicated
+items, 2.33%, itself a lower bound because the 576 unadjudicated items were
+never individually reviewed and measured screen recall on the adjudicated
+set was 11/14), and the automated class-(ii) bound (maximum 4.8% in one
+cell, median 1.3%, pooled 389 of 30,171, 1.3%). The frozen 5% threshold and
+the row-7 C2 outcome mapping are not modified by this amendment; what
+changes is that the completion estimate Amendment A6 held open is now known
+not to be obtainable before the deadline. No further native-speaker
+sampling was performed before submission.
+
+Execution discipline: the sample was drawn and judged before this amendment
+was written; the amendment records the outcome retrospectively, the same
+day, and is committed before `paper/main.tex` is edited to match it.
+
+This amendment was drafted with AI assistance (disclosed per the paper's
+AI-assistance statement); the reported counts and rates were checked for
+arithmetic consistency before recording.
