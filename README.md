@@ -5,6 +5,8 @@ from text actually lives: relation understanding or entity canonicalization.
 
 Accepted at SPELLL 2026, Track 7, for publication by Springer in CCIS.
 
+Paper: *Decomposing the Low-Resource Penalty in Indic Knowledge Graph Population*, by Kevin Andrew A. Project page: https://www.kevinandrew.tech/research/indic-kg-population
+
 **Start here: [PREREGISTRATION.md](PREREGISTRATION.md)** — the hypothesis, decision
 thresholds, and statistical procedures were committed before any model output was
 scored (first commit of this repository, `61f1ee1`, 2026-07-15). `score.py` checks
